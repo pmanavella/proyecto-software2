@@ -1,0 +1,76 @@
+version: '3.9'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - users-api
+      - courses-api
+      - search-api
+
+  users-api:
+    build: ./users-api
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_NAME=usersdb
+
+  courses-api:
+    build: ./courses-api
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mongodb
+      - rabbitmq
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/coursesdb
+
+  registration-api:
+    build: ./registration-api
+    ports:
+      - "8083:8080"
+    depends_on:
+      - users-api
+      - courses-api
+
+  search-api:
+    build: ./search-api
+    ports:
+      - "8084:8080"
+    depends_on:
+      - solr
+      - rabbitmq
+    environment:
+      - SOLR_URL=http://solr:8983/solr/courses
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: usersdb
+    ports:
+      - "3306:3306"
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  solr:
+    image: solr:latest
+    ports:
+      - "8983:8983"
+    command:
+      - solr-create -c courses
