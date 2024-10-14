@@ -12,6 +12,10 @@ type CoursesRequest_Title []CourseRequest_Title
 
 type CoursesRequest_Description []CourseRequest_Description
 
+type CoursesNewRequest []CourseNewRequest
+
+type CoursesNewResponse []CourseNewResponse
+
 // BUSQUEDA DE CURSOS
 
 type CourseRequest_Category struct {
@@ -50,17 +54,24 @@ type CourseResponse_Full struct {
 	ImageURL     string `json:"image_url"`
 	Duration     string `json:"duration"`
 	Instructor   string `json:"instructor"`
+	Points       string `json:"points"`
+	Capacity     int    `json:"capacity"`
 	Requirements string `json:"requirements"`
 }
 
-// esto va a ir en Registration
+// // CREAR NUEVO CURSO
 
-// // INSCRIPCION EN CURSO
-// type CourseRequest_Registration struct {
-// 	Token     string `json:"token"`
-// 	ID_Course int    `json:"course_id"`
-// }
+type CourseNewRequest struct {
+	ID_Course    int    `json:"id_course"`
+	Title        string `json:"title"`
+	Description  string `json:"description"`
+	Category     string `json:"category"`
+	ImageURL     string `json:"image_url"`
+	Duration     string `json:"duration"`
+	Requirements string `json:"requirements"`
+	Instructor   string `json:"instructor"`
+}
 
-// type CourseResponse_Registration struct {
-// 	ID_Course int `json:"course_id"`
-// }
+type CourseNewResponse struct {
+	Token string `json:"token"`
+}
