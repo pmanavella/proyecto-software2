@@ -1,6 +1,5 @@
 package usersapi
 
-
 // msotrar usuario
 
 type UserResponse struct {

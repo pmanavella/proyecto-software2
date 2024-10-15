@@ -75,3 +75,13 @@ type CourseNewRequest struct {
 type CourseNewResponse struct {
 	Token string `json:"token"`
 }
+
+// INSCRIPCION EN CURSO
+type CourseRequest_Registration struct {
+	Token     string `json:"token"`
+	ID_Course int    `json:"course_id"`
+}
+
+type CourseResponse_Registration struct {
+	ID_Course int `json:"course_id"`
+}
