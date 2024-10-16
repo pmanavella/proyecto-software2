@@ -37,7 +37,7 @@ type CourseRequest_Token struct {
 // RESULTADO LISTANDO CURSOS
 
 type CourseResponse_Result struct {
-	ID_Course   int     `json:"id_course"`
+	ID_Course   string  `json:"id_course"`
 	Title       string  `json:"title"`
 	Description string  `json:"description"`
 	ImageURL    string  `json:"image_url"`
@@ -47,7 +47,7 @@ type CourseResponse_Result struct {
 // DETALLE DEL CURSO
 
 type CourseResponse_Full struct {
-	ID_Course    int    `json:"id_course"`
+	ID_Course    string  `json:"id_course"`
 	Title        string `json:"title"`
 	Description  string `json:"description"`
 	Category     string `json:"category"`
@@ -62,7 +62,7 @@ type CourseResponse_Full struct {
 // // CREAR NUEVO CURSO
 
 type CourseNewRequest struct {
-	ID_Course    int    `json:"id_course"`
+	ID_Course    string `json:"id_course"`
 	Title        string `json:"title"`
 	Description  string `json:"description"`
 	Category     string `json:"category"`
@@ -79,9 +79,9 @@ type CourseNewResponse struct {
 // INSCRIPCION EN CURSO
 type CourseRequest_Registration struct {
 	Token     string `json:"token"`
-	ID_Course int    `json:"course_id"`
+	ID_Course string `json:"course_id"`
 }
 
 type CourseResponse_Registration struct {
-	ID_Course int `json:"course_id"`
+	ID_Course string `json:"course_id"`
 }

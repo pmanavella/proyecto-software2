@@ -1,7 +1,7 @@
 package courses
 
 type Course struct {
-	ID_Course    int    `bson:"id_course"`
+	ID_Course    string `bson:"id_course"`
 	Title        string `bson:"title"`
 	Description  string `bson:"description"`
 	Category     string `bson:"category"`
