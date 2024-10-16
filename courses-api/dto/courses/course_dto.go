@@ -1,4 +1,4 @@
-package coursesapi
+package courses
 
 //dto es domain
 
