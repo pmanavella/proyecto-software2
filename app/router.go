@@ -12,7 +12,6 @@ var (
 
 func init() {
 	router = gin.Default()
-
 	router.Use(cors.Default())
 }
 
@@ -20,7 +19,6 @@ func StartRouter() {
 	MapUrls()
 
 	log.Info("Starting server")
-
 	router.Run(":8080")
 
 }
