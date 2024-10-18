@@ -47,7 +47,7 @@ type CourseResponse_Result struct {
 // DETALLE DEL CURSO
 
 type CourseResponse_Full struct {
-	ID_Course    string  `json:"id_course"`
+	ID_Course    string `json:"id_course"`
 	Title        string `json:"title"`
 	Description  string `json:"description"`
 	Category     string `json:"category"`
