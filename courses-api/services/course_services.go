@@ -15,9 +15,29 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var Db *gorm.DB
+
+type Repository interface {
+	GetCourseByID(ctx context.Context, id string) (coursesDAO.Course, error)
+	Create(ctx context.Context, hotel coursesDAO.Course) (string, error)
+}
+
 type courseService struct {
 	courseClient   courseclient.CourseClientInterface
 	registerClient registerclient.RegisterClientInterface
+	mainRepository  Repository
+	cacheRepository Repository
+	eventsQueue     Queue
+}
+
+type Queue interface {
+	Publish(hotelNew courseDto.CourseNew) error
+}
+
+type Service struct {
+	mainRepository  Repository
+	cacheRepository Repository
+	eventsQueue     Queue
 }
 
 type CourseServiceInterface interface {
@@ -41,6 +61,17 @@ var (
 func init() {
 	CourseService = &courseService{courseclient.CourseClient, registerclient.RegisterClient}
 }
+
+func NewService(mainRepository Repository, cacheRepository Repository, eventsQueue Queue) Service {
+	return Service{
+		mainRepository:  mainRepository,
+		cacheRepository: cacheRepository,
+		eventsQueue:     eventsQueue,
+	}
+}
+
+// DEVUELVE TODOS LOS CURSOS
+// router.GET("/course", courseController.GetCourses)
 
 func (c *courseService) GetCourses() (dto.CoursesResponse_Full, e.ApiError) {
 
@@ -346,109 +377,4 @@ func (c *courseService) RegisterUserToCourse(tokenString string, courseId int) (
 	registerResp.ID_Course = register.CourseID
 	return registerResp, nil
 
-}
-
-
-
-////// extra option without Db gorm
-
-
-package service
-
-import (
-	"errors"
-	"fmt"
-	"sync"
-
-	"myapp/dto"
-	"myapp/e"
-)
-
-// Estructura para almacenar los cursos en memoria
-type courseService struct {
-	courses map[int]dto.CourseResponse_Full
-	mutex   sync.Mutex
-}
-
-var CourseService = &courseService{
-	courses: make(map[int]dto.CourseResponse_Full),
-}
-
-// Crear un curso
-func (c *courseService) CreateCourse(course dto.CourseResponse_Full) (dto.CourseResponse_Full, e.ApiError) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	// Generar un nuevo ID para el curso
-	course.ID_Course = len(c.courses) + 1
-
-	// Almacenar el curso en el mapa
-	c.courses[course.ID_Course] = course
-
-	return course, nil
-}
-
-// Actualizar un curso
-func (c *courseService) UpdateCourse(course dto.CourseResponse_Full) (dto.CourseResponse_Full, e.ApiError) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	// Verificar si el curso existe
-	existingCourse, exists := c.courses[course.ID_Course]
-	if !exists {
-		return dto.CourseResponse_Full{}, e.NewNotFoundApiError("course not found")
-	}
-
-	// Actualizar los datos del curso
-	existingCourse.Name = course.Name
-	existingCourse.Description = course.Description
-	existingCourse.Duration = course.Duration
-
-	// Guardar el curso actualizado
-	c.courses[course.ID_Course] = existingCourse
-
-	return existingCourse, nil
-}
-
-// Eliminar un curso
-func (c *courseService) DeleteCourse(courseId int) e.ApiError {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	// Verificar si el curso existe
-	if _, exists := c.courses[courseId]; !exists {
-		return e.NewNotFoundApiError("course not found")
-	}
-
-	// Eliminar el curso
-	delete(c.courses, courseId)
-
-	return nil
-}
-
-// Obtener todos los cursos
-func (c *courseService) GetAllCourses() ([]dto.CourseResponse_Full, e.ApiError) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	var courses []dto.CourseResponse_Full
-	for _, course := range c.courses {
-		courses = append(courses, course)
-	}
-
-	return courses, nil
-}
-
-// Obtener curso por ID
-func (c *courseService) GetCourseById(courseId int) (dto.CourseResponse_Full, e.ApiError) {
-	c.mutex.Lock()
-	defer c.mutex.Unlock()
-
-	// Verificar si el curso existe
-	course, exists := c.courses[courseId]
-	if !exists {
-		return dto.CourseResponse_Full{}, e.NewNotFoundApiError("course not found")
-	}
-
-	return course, nil
 }
