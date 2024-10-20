@@ -1,7 +1,7 @@
-package searchapi
+package search_dto
 
-type CourseResponse_Full struct {
-	ID_Course    int    `json:"id_course"`
+type SearchDto struct {
+	ID_Course    string    `json:"id_course"`
 	Title        string `json:"title"`
 	Description  string `json:"description"`
 	Category     string `json:"category"`
