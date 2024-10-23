@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 )
-
+///// esto no va, sirve dsp para users y courses 
 var Db *gorm.DB
 
 type courseClient struct{}
