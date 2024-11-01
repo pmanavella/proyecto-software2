@@ -5,6 +5,8 @@ import (
     "fmt"
     "github.com/streadway/amqp"
     "log"
+    "github.com/rabbitmq/amqp091-go"
+	log "github.com/sirupsen/logrus"
 )
 
 type RabbitConfig struct {
@@ -51,6 +53,37 @@ func NewRabbit(config RabbitConfig) Rabbit {
     }
 }
 
+func (queue Rabbit) Publish(courseNew hotels.CourseNew) error {
+	bytes, err := json.Marshal(courseNew)
+	if err != nil {
+		return fmt.Errorf("error marshaling Rabbit courseNew: %w", err)
+	}
+	if err := queue.channel.Publish(
+		"",
+		queue.queue.Name,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "application/json",
+			Body:        bytes,
+		}); err != nil {
+		return fmt.Errorf("error publishing to Rabbit: %w", err)
+	}
+	return nil
+}
+
+// Close cleans up the RabbitMQ resources
+func (queue Rabbit) Close() {
+	if err := queue.channel.Close(); err != nil {
+		log.Printf("error closing Rabbit channel: %v", err)
+	}
+	if err := queue.connection.Close(); err != nil {
+		log.Printf("error closing Rabbit connection: %v", err)
+	}
+}
+
+//////
+
 func (r *Rabbit) Notify(message interface{}) error {
     body, err := json.Marshal(message)
     if err != nil {
@@ -70,87 +103,33 @@ func (r *Rabbit) Notify(message interface{}) error {
     return err
 }
 
-// package queues
+// creo este nuevo archivo que indica que esta parte del sistema
+// interactúa con clientes externos (en este caso, RabbitMQ).
 
-// import (
-// 	"context"
-// 	"time"
-// 	amqp "github.com/rabbitmq/amqp091-go"
-// 	log "github.com/sirupsen/logrus"
-// )
+var rabbitConn *amqp.Connection
 
-// // Estructura queue para manejar la cola de RabbitMQ
-// type queue struct {
-// 	Name    string
-// 	channel *amqp.Channel
-// }
+// InitRabbitMQ crea una conexión global con RabbitMQ
+func InitRabbitMQ() error {
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		log.Errorf("Error al conectarse a RabbitMQ: %v", err)
+		return err
+	}
+	rabbitConn = conn
 
-// // Interfaz para la cola que expone los métodos necesarios
-// type queueInterface interface {
-// 	// Establece la conexión con RabbitMQ, abre el canal, y declara la cola para que esté lista para recibir mensajes.
-// 	InitQueue(queueName string, conn *amqp.Connection) error 
-// 	Publish(body []byte) error
-// }
+	log.Info("Conexión a RabbitMQ establecida")
+	return nil
+}
 
-// // Variable global Queue para acceder a la implementación
-// var Queue queueInterface
+// devuelve la conexión activa a RabbitMQ
+func GetRabbitConnection() *amqp.Connection {
+	return rabbitConn
+}
 
-// // Inicializa la variable Queue al iniciar el paquete
-// func init() {
-// 	Queue = &queue{}
-// }
-
-// // InitQueue inicializa la cola, crea el canal y declara la cola en RabbitMQ
-// func (q *queue) InitQueue(queueName string, conn *amqp.Connection) error {
-// 	// Crear canal
-// 	ch, err := conn.Channel()
-// 	if err != nil {
-// 		log.Error("Error al abrir el canal", err)
-// 		return err
-// 	}
-// 	q.channel = ch
-// 	q.Name = queueName
-
-// 	// Declarar la cola en RabbitMQ
-// 	_, err = ch.QueueDeclare(
-// 		queueName, // Nombre de la cola
-// 		true,      // Durable (la cola persiste)
-// 		false,     // Auto-delete cuando no se usa
-// 		false,     // Exclusiva
-// 		false,     // No-wait
-// 		nil,       // Argumentos adicionales
-// 	)
-// 	if err != nil {
-// 		log.Error("Error al declarar la cola", err)
-// 		return err
-// 	}
-
-// 	log.Infof("Cola '%s' declarada correctamente", queueName)
-// 	return nil
-// }
-
-// // Publish envía un mensaje a la cola de RabbitMQ
-// func (q *queue) Publish(body []byte) error {
-// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-// 	defer cancel()
-
-// 	// Publicar mensaje en la cola de RabbitMQ
-// 	err := q.channel.PublishWithContext(
-// 		ctx,
-// 		"",       // Exchange (vacío para usar cola por defecto)
-// 		q.Name,   // Routing key (nombre de la cola)
-// 		false,    // Mandatory
-// 		false,    // Immediate
-// 		amqp.Publishing{
-// 			ContentType: "application/json",
-// 			Body:        body,
-// 		})
-
-// 	if err != nil {
-// 		log.Error("Error al publicar el mensaje en la cola", err)
-// 		return err
-// 	}
-
-// 	log.Infof("Mensaje publicado correctamente en la cola '%s'", q.Name)
-// 	return nil
-// }
+// CloseRabbitMQ cierra la conexión con RabbitMQ al finalizar el uso
+func CloseRabbitMQ() {
+	if rabbitConn != nil {
+		rabbitConn.Close()
+		log.Info("Conexión a RabbitMQ cerrada")
+	}
+}

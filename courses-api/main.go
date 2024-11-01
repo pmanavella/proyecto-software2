@@ -4,6 +4,7 @@ import (
     "courses-api/clients"
     "courses-api/handlers"
     "courses-api/repositories"
+    "courses-api/services"
     "courses-api/queues"
     "log"
     "net/http"
@@ -25,8 +26,9 @@ func main() {
     }
     rabbit := clients.NewRabbit(rabbitConfig)
 
-    // Configuración de Handlers
-    handler := handlers.NewHandler(repo, rabbit)
+    // Configuración de Servicios y Handlers
+    service := services.NewCourseService(repo, rabbit)
+    handler := handlers.NewHandler(service)
 
     http.HandleFunc("/courses", handler.CreateCourse)
     http.HandleFunc("/courses/availability", handler.CalculateAvailability)

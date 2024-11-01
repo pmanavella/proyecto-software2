@@ -79,9 +79,13 @@ type CourseNewResponse struct {
 // INSCRIPCION EN CURSO
 type CourseRequest_Registration struct {
 	Token     string `json:"token"`
-	ID_Course string `json:"course_id"`
+	ID_Course string `json:"id_course"`
 }
 
 type CourseResponse_Registration struct {
-	ID_Course string `json:"course_id"`
+	ID_Course string `json:"id_course"`
+}
+
+type CourseNew struct {
+	ID_Course string `json:"id_course"`
 }

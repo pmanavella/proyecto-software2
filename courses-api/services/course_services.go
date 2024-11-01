@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"cursos-ucc/dto"
 	"cursos-ucc/model"
 	e "cursos-ucc/utils/errors"
@@ -18,20 +19,20 @@ import (
 var Db *gorm.DB
 
 type Repository interface {
-	GetCourseByID(ctx context.Context, id string) (coursesDAO.Course, error)
-	Create(ctx context.Context, hotel coursesDAO.Course) (string, error)
+	GetCourseByID(ctx context.Context, id string) (dto.Course, error)
+	Create(ctx context.Context, course dto.Course) (string, error)
 }
 
 type courseService struct {
-	courseClient   courseclient.CourseClientInterface
-	registerClient registerclient.RegisterClientInterface
+	courseClient    courseclient.CourseClientInterface
+	registerClient  registerclient.RegisterClientInterface
 	mainRepository  Repository
 	cacheRepository Repository
 	eventsQueue     Queue
 }
 
 type Queue interface {
-	Publish(hotelNew courseDto.CourseNew) error
+	Publish(hotelNew courseDomain.CourseNew) error
 }
 
 type Service struct {
