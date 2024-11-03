@@ -1,12 +1,11 @@
-package users
+package repositoriesusers
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"users-api/dao/users"
-
 	"github.com/bradfitz/gomemcache/memcache"
+	"users-api/dao"
 )
 
 type MemcachedConfig struct {
