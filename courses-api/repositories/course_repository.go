@@ -2,7 +2,7 @@ package repositories
 
 import (
     "context"
-    "courses-api/dao"
+    dao "courses-api/dao/courses"
     "go.mongodb.org/mongo-driver/bson"
     "go.mongodb.org/mongo-driver/mongo"
 )
@@ -39,4 +39,43 @@ func (r *CourseRepository) GetCourse(id string) (dao.Course, error) {
     filter := bson.M{"id_course": id}
     err := r.collection.FindOne(context.Background(), filter).Decode(&course)
     return course, err
+}
+
+func (r *CourseRepository) SearchCoursesByTitle(title string) ([]dao.Course, error) {
+    var courses []dao.Course
+    filter := bson.M{"title": bson.M{"$regex": title, "$options": "i"}}
+    cursor, err := r.collection.Find(context.Background(), filter)
+    if err != nil {
+        return nil, err
+    }
+    defer cursor.Close(context.Background())
+
+    for cursor.Next(context.Background()) {
+        var course dao.Course
+        if err := cursor.Decode(&course); err != nil {
+            return nil, err
+        }
+        courses = append(courses, course)
+    }
+
+    return courses, nil
+}
+
+func (r *CourseRepository) GetAllCourses() ([]dao.Course, error) {
+    var courses []dao.Course
+    cursor, err := r.collection.Find(context.Background(), bson.M{})
+    if err != nil {
+        return nil, err
+    }
+    defer cursor.Close(context.Background())
+
+    for cursor.Next(context.Background()) {
+        var course dao.Course
+        if err := cursor.Decode(&course); err != nil {
+            return nil, err
+        }
+        courses = append(courses, course)
+    }
+
+    return courses, nil
 }

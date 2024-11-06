@@ -1,4 +1,4 @@
-package hotels
+package repositories
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	hotelsDAO "hotels-api/dao/hotels"
 	"log"
+	dao "courses-api/dao/courses"
 )
 
 type MongoConfig struct {
@@ -52,33 +52,30 @@ func NewMongo(config MongoConfig) Mongo {
 	}
 }
 
-func (repository Mongo) GetCourseById(ctx context.Context, id string) (hotelsDAO.Hotel, error) {
+func (repository Mongo) GetCourseByID(ctx context.Context, id string) (dao.Course, error) {
 	// Get from MongoDB
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return hotelsDAO.Hotel{}, fmt.Errorf("error converting id to mongo ID: %w", err)
+		return dao.Course{}, fmt.Errorf("error converting id to mongo ID: %w", err)
 	}
 	result := repository.client.Database(repository.database).Collection(repository.collection).FindOne(ctx, bson.M{"_id": objectID})
 	if result.Err() != nil {
-		return hotelsDAO.Hotel{}, fmt.Errorf("error finding document: %w", result.Err())
+		return dao.Course{}, fmt.Errorf("error finding document: %w", result.Err())
 	}
 
 	// Convert document to DAO
-	var hotelDAO hotelsDAO.Hotel
-	if err := result.Decode(&hotelDAO); err != nil {
-		return hotelsDAO.Hotel{}, fmt.Errorf("error decoding result: %w", err)
+	var cursoDAO dao.Course
+	if err := result.Decode(&cursoDAO); err != nil {
+		return dao.Course{}, fmt.Errorf("error decoding result: %w", err)
 	}
-	return hotelDAO, nil
+	return cursoDAO, nil
 }
 
-func (repository Mongo) Create(ctx context.Context, hotel hotelsDAO.Hotel) (string, error) {
-	// Insert into mongo
-	result, err := repository.client.Database(repository.database).Collection(repository.collection).InsertOne(ctx, hotel)
+func (repository Mongo) Create(ctx context.Context, curso dao.Course) (string, error) {
+	result, err := repository.client.Database(repository.database).Collection(repository.collection).InsertOne(ctx, curso)
 	if err != nil {
 		return "", fmt.Errorf("error creating document: %w", err)
 	}
-
-	// Get inserted ID
 	objectID, ok := result.InsertedID.(primitive.ObjectID)
 	if !ok {
 		return "", fmt.Errorf("error converting mongo ID to object ID")
@@ -86,9 +83,9 @@ func (repository Mongo) Create(ctx context.Context, hotel hotelsDAO.Hotel) (stri
 	return objectID.Hex(), nil
 }
 
-func (repository Mongo) Update(ctx context.Context, hotel hotelsDAO.Hotel) error {
-	// Convert hotel ID to MongoDB ObjectID
-	objectID, err := primitive.ObjectIDFromHex(hotel.ID)
+func (repository Mongo) Update(ctx context.Context, course dao.Course) error {
+	// Convert curso ID to MongoDB ObjectID
+	objectID, err := primitive.ObjectIDFromHex(course.ID_Course)
 	if err != nil {
 		return fmt.Errorf("error converting id to mongo ID: %w", err)
 	}
@@ -97,28 +94,25 @@ func (repository Mongo) Update(ctx context.Context, hotel hotelsDAO.Hotel) error
 	update := bson.M{}
 
 	// Only set the fields that are not empty or their default value
-	if hotel.Name != "" {
-		update["name"] = hotel.Name
+	if course.Description != "" {
+		update["Descripcion"] = course.Description
 	}
-	if hotel.Address != "" {
-		update["address"] = hotel.Address
+	if course.Title != "" {
+		update["Título"] = course.Title
 	}
-	if hotel.City != "" {
-		update["city"] = hotel.City
+	if course.Category != "" {
+		update["Categoria"] = course.Category
 	}
-	if hotel.State != "" {
-		update["state"] = hotel.State
+	if course.Requirements != "" {
+		update["Requisitos"] = course.Requirements
 	}
-	if hotel.Rating != 0 { // Assuming 0 is the default for Rating
-		update["rating"] = hotel.Rating
-	}
-	if len(hotel.Amenities) > 0 { // Assuming empty slice is the default for Amenities
-		update["amenities"] = hotel.Amenities
+	if course.Points != "" { 
+		update["Puntos"] = course.Points
 	}
 
 	// Update the document in MongoDB
 	if len(update) == 0 {
-		return fmt.Errorf("no fields to update for hotel ID %s", hotel.ID)
+		return fmt.Errorf("no fields to update for curso ID %s", course.ID_Course)
 	}
 
 	filter := bson.M{"_id": objectID}
@@ -127,27 +121,7 @@ func (repository Mongo) Update(ctx context.Context, hotel hotelsDAO.Hotel) error
 		return fmt.Errorf("error updating document: %w", err)
 	}
 	if result.MatchedCount == 0 {
-		return fmt.Errorf("no document found with ID %s", hotel.ID)
-	}
-
-	return nil
-}
-
-func (repository Mongo) Delete(ctx context.Context, id string) error {
-	// Convert hotel ID to MongoDB ObjectID
-	objectID, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return fmt.Errorf("error converting id to mongo ID: %w", err)
-	}
-
-	// Delete the document from MongoDB
-	filter := bson.M{"_id": objectID}
-	result, err := repository.client.Database(repository.database).Collection(repository.collection).DeleteOne(ctx, filter)
-	if err != nil {
-		return fmt.Errorf("error deleting document: %w", err)
-	}
-	if result.DeletedCount == 0 {
-		return fmt.Errorf("no document found with ID %s", id)
+		return fmt.Errorf("no document found with ID %s", course.ID_Course)
 	}
 
 	return nil

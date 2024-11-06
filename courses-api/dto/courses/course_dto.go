@@ -69,6 +69,8 @@ type CourseNewRequest struct {
 	ImageURL     string `json:"image_url"`
 	Duration     string `json:"duration"`
 	Requirements string `json:"requirements"`
+	Points       string `json:"points"`
+	Capacity     int    `json:"capacity"`
 	Instructor   string `json:"instructor"`
 }
 

@@ -1,198 +1,296 @@
-package controllers
+package cursos
 
 import (
-	"cursos-ucc/dto"
-	service "cursos-ucc/services"
-	"fmt"
-	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
+    "context"
+    courseDto "courses-api/dto/courses"
+    "fmt"
+    "github.com/gin-gonic/gin"
+    "net/http"
+    "strings"
 )
 
-func GetCourses(c *gin.Context) {
-
-	var coursesDto dto.CoursesResponse_Full
-	coursesDto, err := service.CourseService.GetCourses()
-	fmt.Println(coursesDto, err)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, coursesDto)
+type Service interface {
+    GetCourseByID(ctx context.Context, id string) (courseDto.CourseResponse_Full, error)
+    Create(ctx context.Context, curso courseDto.CourseResponse_Full) (string, error)
+    Update(ctx context.Context, curso courseDto.CourseResponse_Full,) error
 }
 
-func GetCoursesByUser(c *gin.Context) {
-	var tokenDto dto.CourseRequest_Token
-	_ = c.BindJSON(&tokenDto)
-
-	var coursesDto dto.CoursesResponse_Full
-	coursesDto, err := service.CourseService.GetCoursesByUser(tokenDto.Token)
-
-	log.Debug(err)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-	log.Debug(coursesDto)
-	c.JSON(http.StatusOK, coursesDto)
+type Controller struct {
+    service Service
 }
 
-func GetAvailableCoursesByUser(c *gin.Context) {
-	var tokenDto dto.CourseRequest_Token
-	_ = c.BindJSON(&tokenDto)
-
-	var coursesDto dto.CoursesResponse_Full
-	coursesDto, err := service.CourseService.GetAvailableCoursesByUser(tokenDto.Token)
-
-	log.Debug(err)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-	log.Debug(coursesDto)
-	c.JSON(http.StatusOK, coursesDto)
+func NewController(service Service) Controller {
+    return Controller{
+        service: service,
+    }
 }
 
-func GetCourseById(c *gin.Context) {
+func (controller Controller) GetCourseByID(ctx *gin.Context) {
+    // Validate ID param
+    cursoID := strings.TrimSpace(ctx.Param("id"))
+    if cursoID == "" {
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "error": "course ID is required",
+        })
+        return
+    }
 
-	id, _ := strconv.Atoi(c.Param("id"))
+    // Get course by ID using the service
+    curso, err := controller.service.GetCourseByID(ctx.Request.Context(), cursoID)
+    if err != nil {
+        ctx.JSON(http.StatusNotFound, gin.H{
+            "error": fmt.Sprintf("error getting course: %s", err.Error()),
+        })
+        return
+    }
 
-	var courseDto dto.CourseResponse_Full
-	courseDto, err := service.CourseService.GetCourseById(id)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, courseDto)
+    // Send response
+    ctx.JSON(http.StatusOK, curso)
 }
 
-func GetCourseByTitle(c *gin.Context) {
+func (controller Controller) Create(ctx *gin.Context) {
+    var curso courseDto.CourseResponse_Full
+    if err := ctx.ShouldBindJSON(&curso); err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "error": fmt.Sprintf("invalid request body: %s", err.Error()),
+        })
+        return
+    }
 
-	//coursesDto, err := courseService.GetCourseByIdUser(id) ---> ver si va o no
+    // Create course using the service
+    cursoID, err := controller.service.Create(ctx.Request.Context(), curso)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{
+            "error": fmt.Sprintf("error creating course: %s", err.Error()),
+        })
+        return
+    }
 
-	var title string
-	title = c.Param(title)
-	var CoursesResponse_Full dto.CoursesResponse_Full
-
-	CoursesResponse_Full, err := service.CourseService.SearchCoursesByTitle(title)
-
-	if err != nil {
-		c.JSON(http.StatusNotFound, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, CoursesResponse_Full)
+    // Send response
+    ctx.JSON(http.StatusCreated, gin.H{
+        "id": cursoID,
+    })
 }
 
-func GetCourseByCategory(c *gin.Context) {
+func (controller Controller) Update(ctx *gin.Context) {
+    var curso courseDto.CourseResponse_Full
+    if err := ctx.ShouldBindJSON(&curso); err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{
+            "error": fmt.Sprintf("invalid request body: %s", err.Error()),
+        })
+        return
+    }
 
-	var category string
-	category = c.Param(category)
-	var CoursesResponse_Full dto.CoursesResponse_Full
+    // Update course using the service
+    if err := controller.service.Update(ctx.Request.Context(), curso); err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{
+            "error": fmt.Sprintf("error updating course: %s", err.Error()),
+        })
+        return
+    }
 
-	CoursesResponse_Full, err := service.CourseService.SearchCoursesByCategory(category)
-
-	if err != nil {
-		c.JSON(http.StatusNotFound, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, CoursesResponse_Full)
+    // Send response
+    ctx.JSON(http.StatusOK, gin.H{
+        "message": "course updated successfully",
+    })
 }
 
-func GetCourseByDescription(c *gin.Context) {
+// package controllers
 
-	var description string
-	description = c.Param(description)
-	var CoursesResponse_Full dto.CoursesResponse_Full
+// import (
+// 	"cursos-ucc/dto"
+// 	service "cursos-ucc/services"
+// 	"fmt"
+// 	"net/http"
+// 	"strconv"
 
-	CoursesResponse_Full, err := service.CourseService.SearchCoursesByDescription(description)
+// 	"github.com/gin-gonic/gin"
+// 	log "github.com/sirupsen/logrus"
+// )
 
-	if err != nil {
-		c.JSON(http.StatusNotFound, err.Error())
-		return
-	}
+// func GetCourses(c *gin.Context) {
 
-	c.JSON(http.StatusOK, CoursesResponse_Full)
-}
+// 	var coursesDto dto.CoursesResponse_Full
+// 	coursesDto, err := service.CourseService.GetCourses()
+// 	fmt.Println(coursesDto, err)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, err.Error())
+// 		return
+// 	}
 
-func PostCourse(c *gin.Context) {
-	var courseDto dto.CourseResponse_Full
-	err := c.BindJSON(&courseDto)
+// 	c.JSON(http.StatusOK, coursesDto)
+// }
 
-	if err != nil {
-		//log.Error(err.Error())
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
+// func GetCoursesByUser(c *gin.Context) {
+// 	var tokenDto dto.CourseRequest_Token
+// 	_ = c.BindJSON(&tokenDto)
 
-	courseDto, er := service.CourseService.CreateCourse(courseDto)
+// 	var coursesDto dto.CoursesResponse_Full
+// 	coursesDto, err := service.CourseService.GetCoursesByUser(tokenDto.Token)
 
-	if er != nil {
-		c.JSON(er.Status(), er)
-		return
-	}
+// 	log.Debug(err)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, err.Error())
+// 		return
+// 	}
+// 	log.Debug(coursesDto)
+// 	c.JSON(http.StatusOK, coursesDto)
+// }
 
-	c.JSON(http.StatusCreated, courseDto)
-}
+// func GetAvailableCoursesByUser(c *gin.Context) {
+// 	var tokenDto dto.CourseRequest_Token
+// 	_ = c.BindJSON(&tokenDto)
 
-func PutCourse(c *gin.Context) {
-	var courseDto dto.CourseResponse_Full
+// 	var coursesDto dto.CoursesResponse_Full
+// 	coursesDto, err := service.CourseService.GetAvailableCoursesByUser(tokenDto.Token)
 
-	err := c.BindJSON(&courseDto)
+// 	log.Debug(err)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, err.Error())
+// 		return
+// 	}
+// 	log.Debug(coursesDto)
+// 	c.JSON(http.StatusOK, coursesDto)
+// }
 
-	if err != nil {
-		//log.Error(err.Error())
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
+// func GetCourseById(c *gin.Context) {
 
-	courseDto, er := service.CourseService.UpdateCourse(courseDto)
+// 	id, _ := strconv.Atoi(c.Param("id"))
 
-	if er != nil {
-		c.JSON(er.Status(), er)
-		return
-	}
+// 	var courseDto dto.CourseResponse_Full
+// 	courseDto, err := service.CourseService.GetCourseById(id)
 
-	c.JSON(http.StatusCreated, courseDto)
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, err.Error())
+// 		return
+// 	}
 
-}
+// 	c.JSON(http.StatusOK, courseDto)
+// }
 
-func DeleteCourse(c *gin.Context) {
-	idParam := c.Param("id")
-	courseID, err := strconv.Atoi(idParam)
-	if err != nil {
-		//log.Error("Invalid course ID: " + idParam)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
-		return
-	}
+// func GetCourseByTitle(c *gin.Context) {
 
-	err = service.CourseService.DeleteCourse(courseID)
-	if err != nil {
-		//log.Error(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+// 	//coursesDto, err := courseService.GetCourseByIdUser(id) ---> ver si va o no
 
-	c.JSON(http.StatusNoContent, nil)
-}
+// 	var title string
+// 	title = c.Param(title)
+// 	var CoursesResponse_Full dto.CoursesResponse_Full
 
-func RegisterUserToCourse(c *gin.Context) {
-	var crr dto.CourseRequest_Registration
-	_ = c.BindJSON(&crr)
+// 	CoursesResponse_Full, err := service.CourseService.SearchCoursesByTitle(title)
 
-	var CourseResponseDto dto.CourseResponse_Registration
-	CourseResponseDto, err := service.CourseService.RegisterUserToCourse(crr.Token, crr.ID_Course)
-	if err != nil {
-		//log.Error(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, err.Error())
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, CourseResponseDto)
-}
+// 	c.JSON(http.StatusOK, CoursesResponse_Full)
+// }
+
+// func GetCourseByCategory(c *gin.Context) {
+
+// 	var category string
+// 	category = c.Param(category)
+// 	var CoursesResponse_Full dto.CoursesResponse_Full
+
+// 	CoursesResponse_Full, err := service.CourseService.SearchCoursesByCategory(category)
+
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, err.Error())
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, CoursesResponse_Full)
+// }
+
+// func GetCourseByDescription(c *gin.Context) {
+
+// 	var description string
+// 	description = c.Param(description)
+// 	var CoursesResponse_Full dto.CoursesResponse_Full
+
+// 	CoursesResponse_Full, err := service.CourseService.SearchCoursesByDescription(description)
+
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, err.Error())
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, CoursesResponse_Full)
+// }
+
+// func PostCourse(c *gin.Context) {
+// 	var courseDto dto.CourseResponse_Full
+// 	err := c.BindJSON(&courseDto)
+
+// 	if err != nil {
+// 		//log.Error(err.Error())
+// 		c.JSON(http.StatusBadRequest, err.Error())
+// 		return
+// 	}
+
+// 	courseDto, er := service.CourseService.CreateCourse(courseDto)
+
+// 	if er != nil {
+// 		c.JSON(er.Status(), er)
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusCreated, courseDto)
+// }
+
+// func PutCourse(c *gin.Context) {
+// 	var courseDto dto.CourseResponse_Full
+
+// 	err := c.BindJSON(&courseDto)
+
+// 	if err != nil {
+// 		//log.Error(err.Error())
+// 		c.JSON(http.StatusBadRequest, err.Error())
+// 		return
+// 	}
+
+// 	courseDto, er := service.CourseService.UpdateCourse(courseDto)
+
+// 	if er != nil {
+// 		c.JSON(er.Status(), er)
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusCreated, courseDto)
+
+// }
+
+// func DeleteCourse(c *gin.Context) {
+// 	idParam := c.Param("id")
+// 	courseID, err := strconv.Atoi(idParam)
+// 	if err != nil {
+// 		//log.Error("Invalid course ID: " + idParam)
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
+// 		return
+// 	}
+
+// 	err = service.CourseService.DeleteCourse(courseID)
+// 	if err != nil {
+// 		//log.Error(err.Error())
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusNoContent, nil)
+// }
+
+// func RegisterUserToCourse(c *gin.Context) {
+// 	var crr dto.CourseRequest_Registration
+// 	_ = c.BindJSON(&crr)
+
+// 	var CourseResponseDto dto.CourseResponse_Registration
+// 	CourseResponseDto, err := service.CourseService.RegisterUserToCourse(crr.Token, crr.ID_Course)
+// 	if err != nil {
+// 		//log.Error(err.Error())
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	c.JSON(http.StatusOK, CourseResponseDto)
+// }
+
