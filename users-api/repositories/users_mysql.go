@@ -85,7 +85,7 @@ func (repository MySQL) Create(user users.User) (int64, error) {
 	if err := repository.db.Create(&user).Error; err != nil {
 		return 0, fmt.Errorf("error creating user: %w", err)
 	}
-	return user.ID, nil
+	return user.UserID, nil
 }
 
 func (repository MySQL) Update(user users.User) error {

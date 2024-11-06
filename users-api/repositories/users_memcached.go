@@ -86,7 +86,7 @@ func (repository Memcached) Create(user users.User) (int64, error) {
 	}
 
 	// Store user with ID as key and username as an alternate key
-	idKey := idKey(user.ID)
+	idKey := idKey(user.UserID)
 	if err := repository.client.Set(&memcache.Item{Key: idKey, Value: data}); err != nil {
 		return 0, fmt.Errorf("error storing user in memcached: %w", err)
 	}
@@ -97,7 +97,7 @@ func (repository Memcached) Create(user users.User) (int64, error) {
 		return 0, fmt.Errorf("error storing username in memcached: %w", err)
 	}
 
-	return user.ID, nil
+	return user.UserID, nil
 }
 
 func (repository Memcached) Update(user users.User) error {
@@ -109,7 +109,7 @@ func (repository Memcached) Update(user users.User) error {
 	}
 
 	// Store user with ID as key
-	idKey := idKey(user.ID)
+	idKey := idKey(user.UserID)
 	if err := repository.client.Set(&memcache.Item{Key: idKey, Value: data}); err != nil {
 		return fmt.Errorf("error updating user in memcached: %w", err)
 	}

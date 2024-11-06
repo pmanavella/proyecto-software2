@@ -6,6 +6,7 @@ require (
 	github.com/bradfitz/gomemcache v0.0.0-20230905024940-24af94b03874
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/json-iterator/go v1.1.12
 	github.com/karlseguin/ccache v2.0.3+incompatible
 	github.com/stretchr/testify v1.9.0
 	gorm.io/driver/mysql v1.5.7
@@ -28,7 +29,6 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/karlseguin/expect v1.0.8 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
