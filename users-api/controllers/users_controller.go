@@ -1,7 +1,6 @@
 package users
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -27,148 +26,90 @@ func NewController(service Service) Controller {
 	}
 }
 
-func (controller Controller) GetAll(c *gin.Context) {
-	// Invoke service
-	users, err := controller.service.GetAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("error getting all users: %s", err.Error()),
-		})
-		return
-	}
-
-	// Send response
-	c.JSON(http.StatusOK, users)
-}
-
-func (controller Controller) GetByID(c *gin.Context) {
-	// Parse user ID from HTTP request
-	userID := c.Param("id")
-	id, err := strconv.ParseInt(userID, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("invalid request: %s", err.Error()),
-		})
-		return
-	}
-
-	// Invoke service
-	user, err := controller.service.GetByID(id)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": fmt.Sprintf("user not found: %s", err.Error()),
-		})
-		return
-	}
-
-	// Send user
-	c.JSON(http.StatusOK, user)
-}
-
-func (controller Controller) Create(c *gin.Context) {
-	// Parse user from HTTP Request
+func (c *Controller) Register(ctx *gin.Context) {
 	var user domain.User
-	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadGateway, gin.H{
-			"error": fmt.Sprintf("invalid request: %s", err.Error()),
-		})
+	if err := ctx.ShouldBindJSON(&user); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Invoke service
-	id, err := controller.service.Create(user)
+	id, err := c.service.Create(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("error creating user: %s", err.Error()),
-		})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Send ID
-	c.JSON(http.StatusCreated, gin.H{
-		"id": id,
-	})
+	ctx.JSON(http.StatusCreated, gin.H{"id": id})
 }
 
-func (controller Controller) Update(c *gin.Context) {
-	// Parse user ID from HTTP request
-	userID := c.Param("id")
-	id, err := strconv.ParseInt(userID, 10, 64)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("invalid request: %s", err.Error()),
-		})
+func (c *Controller) Login(ctx *gin.Context) {
+	var loginRequest domain.LoginRequest
+	if err := ctx.ShouldBindJSON(&loginRequest); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Parse updated user data from HTTP request
+	response, err := c.service.Login(loginRequest.Username, loginRequest.Password)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (c *Controller) GetAll(ctx *gin.Context) {
+	users, err := c.service.GetAll()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, users)
+}
+
+func (c *Controller) GetByID(ctx *gin.Context) {
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	user, err := c.service.GetByID(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
+}
+
+func (c *Controller) Update(ctx *gin.Context) {
 	var user domain.User
-	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("invalid request: %s", err.Error()),
-		})
+	if err := ctx.ShouldBindJSON(&user); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Set the ID of the user to be updated
-	user.ID = id
-
-	// Invoke service
-	if err := controller.service.Update(user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("error updating user: %s", err.Error()),
-		})
+	if err := c.service.Update(user); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Send response
-	c.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
 }
 
-func (controller Controller) Delete(c *gin.Context) {
-	// Parse user ID from HTTP request
-	userID := c.Param("id")
-	id, err := strconv.ParseInt(userID, 10, 64)
+func (c *Controller) Delete(ctx *gin.Context) {
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("invalid request: %s", err.Error()),
-		})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
 
-	// Invoke service
-	if err := controller.service.Delete(id); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": fmt.Sprintf("error deleting user: %s", err.Error()),
-		})
+	if err := c.service.Delete(id); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Send response
-	c.JSON(http.StatusOK, gin.H{
-		"id": id,
-	})
-}
-
-func (controller Controller) Login(c *gin.Context) {
-	// Parse user from HTTP request
-	var user domain.User
-	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": fmt.Sprintf("invalid request: %s", err.Error()),
-		})
-		return
-	}
-
-	// Invoke service
-	response, err := controller.service.Login(user.Username, user.Password)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": fmt.Sprintf("unauthorized: %s", err.Error()),
-		})
-		return
-	}
-
-	// Send login with token
-	c.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }

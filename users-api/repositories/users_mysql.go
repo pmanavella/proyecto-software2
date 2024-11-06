@@ -1,10 +1,10 @@
-package users
+package repositoriesusers
 
 import (
 	"errors"
 	"fmt"
 	"log"
-	"users-api/dao/users"
+	"users-api/dao"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
