@@ -59,7 +59,7 @@ func (repository MySQL) GetAll() ([]users.User, error) {
 	return usersList, nil
 }
 
-func (repository MySQL) GetByID(id int64) (users.User, error) {
+func (repository MySQL) GetUserByID(id int64) (users.User, error) {
 	var user users.User
 	if err := repository.db.First(&user, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -100,4 +100,12 @@ func (repository MySQL) Delete(id int64) error {
 		return fmt.Errorf("error deleting user: %w", err)
 	}
 	return nil
+}
+
+func (repository MySQL) GetUserByEmail(email string) (users.User, error) {
+    var user users.User
+    if err := repository.db.Where("email = ?", email).First(&user).Error; err != nil {
+        return users.User{}, fmt.Errorf("error getting user by email: %w", err)
+    }
+    return user, nil
 }

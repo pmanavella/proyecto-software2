@@ -4,7 +4,7 @@ import (
     "fmt"
     "github.com/karlseguin/ccache"
     "time"
-    "users-api/domain/users"
+    "users-api/dao"
 )
 
 type CacheConfig struct {
@@ -65,15 +65,15 @@ func (repository Cache) GetByUsername(username string) (users.User, error) {
 }
 
 func (repository Cache) Create(user users.User) (int64, error) {
-    idKey := cacheKeyByID(user.ID)
+    idKey := cacheKeyByID(user.UserID)
     userKey := cacheKeyByUsername(user.Username)
     repository.client.Set(idKey, user, repository.ttl)
     repository.client.Set(userKey, user, repository.ttl)
-    return user.ID, nil
+    return user.UserID, nil
 }
 
 func (repository Cache) Update(user users.User) error {
-    idKey := cacheKeyByID(user.ID)
+    idKey := cacheKeyByID(user.UserID)
     userKey := cacheKeyByUsername(user.Username)
     repository.client.Set(idKey, user, repository.ttl)
     repository.client.Set(userKey, user, repository.ttl)

@@ -84,6 +84,23 @@ func (c *Controller) GetByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+
+func (c *Controller) Create(ctx *gin.Context) {
+    var user domain.User
+    if err := ctx.ShouldBindJSON(&user); err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+        return
+    }
+
+    id, err := c.service.Create(user)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    ctx.JSON(http.StatusCreated, gin.H{"id": id})
+}
+
+
 func (c *Controller) Update(ctx *gin.Context) {
 	var user domain.User
 	if err := ctx.ShouldBindJSON(&user); err != nil {
