@@ -126,3 +126,100 @@ func (repository Mongo) Update(ctx context.Context, course dao.Course) error {
 
 	return nil
 }
+
+func (repository Mongo) Delete(ctx context.Context, courseID string) (string, error) {
+    objectID, err := primitive.ObjectIDFromHex(courseID)
+    if err != nil {
+        return "", fmt.Errorf("invalid course ID: %w", err)
+    }
+
+    filter := bson.M{"_id": objectID}
+    result, err := repository.client.Database(repository.database).Collection(repository.collection).DeleteOne(ctx, filter)
+    if err != nil {
+        return "", fmt.Errorf("error deleting document: %w", err)
+    }
+    if result.DeletedCount == 0 {
+        return "", fmt.Errorf("no document found with ID %s", courseID)
+    }
+
+    return courseID, nil
+}
+
+func (repository Mongo) SearchByTitle(ctx context.Context, title string) ([]dao.Course, error) {
+	filter := bson.M{"Título": bson.M{"$regex": title, "$options": "i"}}
+	cursor, err := repository.client.Database(repository.database).Collection(repository.collection).Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("error finding documents: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var courses []dao.Course
+	for cursor.Next(ctx) {
+		var course dao.Course
+		if err := cursor.Decode(&course); err != nil {
+			return nil, fmt.Errorf("error decoding document: %w", err)
+		}
+		courses = append(courses, course)
+	}
+
+	return courses, nil
+}
+
+func (repository Mongo) SearchByCategory(ctx context.Context, category string) ([]dao.Course, error) {
+	filter := bson.M{"Categoria": bson.M{"$regex": category, "$options": "i"}}
+	cursor, err := repository.client.Database(repository.database).Collection(repository.collection).Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("error finding documents: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var courses []dao.Course
+	for cursor.Next(ctx) {
+		var course dao.Course
+		if err := cursor.Decode(&course); err != nil {
+			return nil, fmt.Errorf("error decoding document: %w", err)
+		}
+		courses = append(courses, course)
+	}
+
+	return courses, nil
+}
+
+func (repository Mongo) SearchByDescription(ctx context.Context, description string) ([]dao.Course, error) {
+	filter := bson.M{"Descripcion": bson.M{"$regex": description, "$options": "i"}}
+	cursor, err := repository.client.Database(repository.database).Collection(repository.collection).Find(ctx, filter)
+	if err != nil {
+		return nil, fmt.Errorf("error finding documents: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var courses []dao.Course
+	for cursor.Next(ctx) {
+		var course dao.Course
+		if err := cursor.Decode(&course); err != nil {
+			return nil, fmt.Errorf("error decoding document: %w", err)
+		}
+		courses = append(courses, course)
+	}
+
+	return courses, nil
+}
+
+func (repository Mongo) GetAll(ctx context.Context) ([]dao.Course, error) {
+	cursor, err := repository.client.Database(repository.database).Collection(repository.collection).Find(ctx, bson.M{})
+	if err != nil {
+		return nil, fmt.Errorf("error finding documents: %w", err)
+	}
+	defer cursor.Close(ctx)
+
+	var courses []dao.Course
+	for cursor.Next(ctx) {
+		var course dao.Course
+		if err := cursor.Decode(&course); err != nil {
+			return nil, fmt.Errorf("error decoding document: %w", err)
+		}
+		courses = append(courses, course)
+	}
+
+	return courses, nil
+}

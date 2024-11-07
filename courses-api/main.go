@@ -1,7 +1,7 @@
 package main
 
 import (
-    "courses-api/clients"
+    clients "courses-api/clients/queues"
     "courses-api/handlers"
     "courses-api/repositories"
     "courses-api/services"
@@ -40,9 +40,7 @@ func main() {
     router.POST("/createCourse", handler.CreateCourse)
     router.PUT("/edit/:course_id", handler.UpdateCourse)
     router.DELETE("/delete/:course_id", handler.DeleteCourse)
-    router.GET("/search", handler.SearchCoursesByTitle)
-    router.POST("/enroll", handler.CreateEnrollment)
-    router.GET("/availability", handler.CalculateAvailability)
+    router.GET("/search", handler.SearchByTitle)
 
     if err := router.Run(":8081"); err != nil {
         log.Fatalf("error running application: %v", err)

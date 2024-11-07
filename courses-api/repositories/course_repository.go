@@ -79,3 +79,4 @@ func (r *CourseRepository) GetAllCourses() ([]dao.Course, error) {
 
     return courses, nil
 }
+

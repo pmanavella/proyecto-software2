@@ -1,9 +1,10 @@
 package handlers
 
 import (
+    "context"
     "courses-api/services"
     "courses-api/dto/courses"
-    "utils/errors"
+    "courses-api/utils/errors"
     "github.com/gin-gonic/gin"
     "net/http"
 )
@@ -38,11 +39,11 @@ func (h *Handler) GetCourseByID(c *gin.Context) {
 func (h *Handler) CreateCourse(c *gin.Context) {
     var courseRequest courses.CourseNewRequest
     if err := c.ShouldBindJSON(&courseRequest); err != nil {
-        c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
+        c.JSON(http.StatusBadRequest, errors.NewBadRequestApiError("invalid json body"))
         return
     }
 
-    id, err := h.service.CreateCourse(courseRequest)
+    id, err := h.service.Create(ctx, courseRequest)
     if err != nil {
         c.JSON(err.Status(), err)
         return
@@ -54,11 +55,11 @@ func (h *Handler) UpdateCourse(c *gin.Context) {
     id := c.Param("id")
     var courseRequest courses.CourseNewRequest
     if err := c.ShouldBindJSON(&courseRequest); err != nil {
-        c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
+        c.JSON(http.StatusBadRequest, errors.NewBadRequestApiError("invalid json body"))
         return
     }
 
-    err := h.service.UpdateCourse(id, courseRequest)
+    err := h.service.Update(id, courseRequest)
     if err != nil {
         c.JSON(err.Status(), err)
         return
@@ -68,7 +69,7 @@ func (h *Handler) UpdateCourse(c *gin.Context) {
 
 func (h *Handler) DeleteCourse(c *gin.Context) {
     id := c.Param("id")
-    err := h.service.DeleteCourse(id)
+    err := h.service.Delete(ctx, id)
     if err != nil {
         c.JSON(err.Status(), err)
         return
@@ -76,39 +77,12 @@ func (h *Handler) DeleteCourse(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "course deleted successfully"})
 }
 
-func (h *Handler) SearchCoursesByTitle(c *gin.Context) {
+func (h *Handler) SearchByTitle(c *gin.Context) {
     title := c.Query("title")
-    courses, err := h.service.SearchCoursesByTitle(title)
+    courses, err := h.service.SearchByTitle(ctx, title)
     if err != nil {
         c.JSON(err.Status(), err)
         return
     }
     c.JSON(http.StatusOK, courses)
-}
-
-func (h *Handler) CreateEnrollment(c *gin.Context) {
-    var enrollmentRequest struct {
-        CourseID string `json:"course_id"`
-        UserID   string `json:"user_id"`
-    }
-    if err := c.ShouldBindJSON(&enrollmentRequest); err != nil {
-        c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
-        return
-    }
-
-    err := h.service.CreateEnrollment(enrollmentRequest.CourseID, enrollmentRequest.UserID)
-    if err != nil {
-        c.JSON(err.Status(), err)
-        return
-    }
-    c.JSON(http.StatusCreated, gin.H{"message": "enrollment created successfully"})
-}
-
-func (h *Handler) CalculateAvailability(c *gin.Context) {
-    err := h.service.CalculateAvailability()
-    if err != nil {
-        c.JSON(err.Status(), err)
-        return
-    }
-    c.JSON(http.StatusOK, gin.H{"message": "availability calculated successfully"})
 }

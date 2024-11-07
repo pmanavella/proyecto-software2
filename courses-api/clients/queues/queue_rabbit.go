@@ -52,7 +52,7 @@ func NewRabbit(config RabbitConfig) Rabbit {
     }
 }
 
-func (r *Rabbit) Notify(message courses.CourseNewResponse) error {
+func (r *Rabbit) Notify(message courses.CourseResponse_Full) error {
     body, err := json.Marshal(message)
     if err != nil {
         return err
