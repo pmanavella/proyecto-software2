@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	users "users-api/dao"
+
 	"github.com/bradfitz/gomemcache/memcache"
-	"users-api/dao"
 )
 
 type MemcachedConfig struct {
@@ -39,7 +40,7 @@ func (repository Memcached) GetAll() ([]users.User, error) {
 	return nil, fmt.Errorf("GetAll not supported in Memcached")
 }
 
-func (repository Memcached) GetByID(id int64) (users.User, error) {
+func (repository Memcached) GetUserByID(id int64) (users.User, error) {
 	// Retrieve the user from Memcached
 	key := idKey(id)
 	item, err := repository.client.Get(key)
@@ -98,6 +99,10 @@ func (repository Memcached) Create(user users.User) (int64, error) {
 	}
 
 	return user.UserID, nil
+}
+
+func (repository Memcached) GetUserByEmail(email string) (users.User, error) {
+	return users.User{}, fmt.Errorf("GetByEmail not implemented in Memcached")
 }
 
 func (repository Memcached) Update(user users.User) error {

@@ -38,7 +38,7 @@ func (repository Cache) GetAll() ([]users.User, error) {
     return nil, fmt.Errorf("GetAll not implemented in cache")
 }
 
-func (repository Cache) GetByID(id int64) (users.User, error) {
+func (repository Cache) GetUserByID(id int64) (users.User, error) {
     idKey := cacheKeyByID(id)
     item := repository.client.Get(idKey)
     if item != nil && !item.Expired() {
@@ -82,7 +82,7 @@ func (repository Cache) Update(user users.User) error {
 
 func (repository Cache) Delete(id int64) error {
     idKey := cacheKeyByID(id)
-    user, err := repository.GetByID(id)
+    user, err := repository.GetUserByID(id)
     if err != nil {
         return fmt.Errorf("error retrieving user by ID for deletion: %w", err)
     }
@@ -90,4 +90,8 @@ func (repository Cache) Delete(id int64) error {
     userKey := cacheKeyByUsername(user.Username)
     repository.client.Delete(userKey)
     return nil
+}
+
+func (repository Cache) GetUserByEmail(email string) (users.User, error) {
+    return users.User{}, fmt.Errorf("GetUserByEmail not implemented in cache")
 }
