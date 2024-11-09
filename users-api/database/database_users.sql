@@ -23,6 +23,9 @@ CREATE INDEX idx_users_email ON users (email);
 
 -- Insertar datos iniciales
 INSERT INTO users (username, password, nombre, apellido, email, admin) VALUES
-('admin', '$2a$10$7EqJtq98hPqEX7fNZaFWoOa8z8lF.5e4xK4j6h5h5h5h5h5h5h5h5', 'Admin', 'User', 'admin@example.com', TRUE),
-('jdoe', '$2a$10$7EqJtq98hPqEX7fNZaFWoOa8z8lF.5e4xK4j6h5h5h5h5h5h5h5h5', 'John', 'Doe', 'jdoe@example.com', FALSE),
-('asmith', '$2a$10$7EqJtq98hPqEX7fNZaFWoOa8z8lF.5e4xK4j6h5h5h5h5h5h5h5h5', 'Alice', 'Smith', 'asmith@example.com', FALSE);
+('admin', '21232f297a57a5a743894a0e4a801fc3', 'Admin', 'User', 'admin@example.com', TRUE),
+('pmanavella', 'dc9f4d858cff6dc1960d5292eecbf9df', 'Pilar', 'Manavella', 'Pmanavella@gmail.com', FALSE),
+('vsponton', '77bfd8ff0493ccaf9f598975b4748d34', 'Victoria', 'Sponton', 'Vsponton@gmail.com', FALSE);
+('valentinaC', 'd70932b58cc9bc3eb9f97ffb24dfa485', 'Valentina', 'Cervellini', 'valentinacervellini@gmail.com', FALSE);
+('JuanG', '152cc4bc44aadf123c0f35449aff336e', 'Juan', 'Gutierrez', 'juangutierrez@gmail.com', FALSE);
+('LucasM', 'df9dc9b984b278ec6880df2c0ab731aa', 'Lucas', 'Mendez', 'lucasmendez@gmail.com', FALSE); 

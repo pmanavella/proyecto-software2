@@ -1,4 +1,4 @@
-package usersapi
+package main
 
 import (
 	"log"
@@ -15,9 +15,9 @@ func main() {
 	// MySQL
 	mySQLRepo := repositories.NewMySQL(
 		repositories.MySQLConfig{
-			Host:     "mysql",
+			Host:     "localhost",
 			Port:     "3306",
-			Database: "users-api",
+			Database: "users_api",
 			Username: "root",
 			Password: "root",
 		},

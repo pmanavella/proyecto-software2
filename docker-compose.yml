@@ -18,8 +18,8 @@ services:
     environment:
       - DB_HOST=mysql
       - DB_USER=root
-      - DB_PASSWORD=password
-      - DB_NAME=usersdb
+      - DB_PASSWORD=root
+      - DB_NAME=users_api
 
   courses-api:
     build: ./courses-api
@@ -30,14 +30,6 @@ services:
       - rabbitmq
     environment:
       - MONGO_URL=mongodb://mongodb:27017/coursesdb
-
-  registration-api:
-    build: ./registration-api
-    ports:
-      - "8083:8080"
-    depends_on:
-      - users-api
-      - courses-api
 
   search-api:
     build: ./search-api
@@ -52,8 +44,8 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: usersdb
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: users_api
     ports:
       - "3306:3306"
 
