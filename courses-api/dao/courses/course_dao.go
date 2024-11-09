@@ -12,3 +12,4 @@ type Course struct {
 	Capacity     int    `bson:"capacity"`
 	Requirements string `bson:"requirements"`
 }
+

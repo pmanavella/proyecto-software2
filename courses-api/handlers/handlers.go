@@ -1,7 +1,7 @@
 package handlers
 
 import (
-    "context"
+   // "context"
     "courses-api/services"
     "courses-api/dto/courses"
     "courses-api/utils/errors"
@@ -18,7 +18,8 @@ func NewHandler(service services.CourseServiceInterface) *Handler {
 }
 
 func (h *Handler) GetCourses(c *gin.Context) {
-    courses, err := h.service.GetCourses()
+    ctx := c.Request.Context()
+    courses, err := h.service.GetAll(ctx)
     if err != nil {
         c.JSON(err.Status(), err)
         return
@@ -43,6 +44,7 @@ func (h *Handler) CreateCourse(c *gin.Context) {
         return
     }
 
+    ctx := c.Request.Context()
     id, err := h.service.Create(ctx, courseRequest)
     if err != nil {
         c.JSON(err.Status(), err)
@@ -69,6 +71,7 @@ func (h *Handler) UpdateCourse(c *gin.Context) {
 
 func (h *Handler) DeleteCourse(c *gin.Context) {
     id := c.Param("id")
+    ctx := c.Request.Context()
     err := h.service.Delete(ctx, id)
     if err != nil {
         c.JSON(err.Status(), err)
@@ -79,6 +82,7 @@ func (h *Handler) DeleteCourse(c *gin.Context) {
 
 func (h *Handler) SearchByTitle(c *gin.Context) {
     title := c.Query("title")
+    ctx := c.Request.Context()
     courses, err := h.service.SearchByTitle(ctx, title)
     if err != nil {
         c.JSON(err.Status(), err)

@@ -62,16 +62,15 @@ type CourseResponse_Full struct {
 // // CREAR NUEVO CURSO
 
 type CourseNewRequest struct {
-	ID_Course    string `json:"id_course"`
-	Title        string `json:"title"`
-	Description  string `json:"description"`
-	Category     string `json:"category"`
-	ImageURL     string `json:"image_url"`
-	Duration     string `json:"duration"`
-	Requirements string `json:"requirements"`
-	Points       string `json:"points"`
-	Capacity     int    `json:"capacity"`
-	Instructor   string `json:"instructor"`
+    Title        string `json:"title"`
+    Description  string `json:"description"`
+    Category     string `json:"category"`
+    ImageURL     string `json:"image_url"`
+    Duration     string `json:"duration"`
+    Instructor   string `json:"instructor"`
+    Points       int    `json:"points"`
+    Capacity     int    `json:"capacity"`
+    Requirements string `json:"requirements"`
 }
 
 type CourseNewResponse struct {
