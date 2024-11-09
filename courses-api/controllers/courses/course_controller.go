@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
+	//"strings"
 
 	"github.com/gin-gonic/gin"
 	dto "courses-api/dto/courses"
@@ -21,7 +21,7 @@ type Service interface {
 	SearchByTitle(ctx context.Context, title string) (courseDto.CoursesResponse_Full, error)
 	SearchByCategory(category string) (courseDto.CoursesResponse_Full, error)
 	SearchByDescription(description string) (courseDto.CoursesResponse_Full, error)
-	RegisterUserToCourse(token string, courseID string) (courseDto.CourseResponse_Registration, error)
+	//RegisterUserToCourse(token string, courseID string) (courseDto.CourseResponse_Registration, error)
 	GetAll(tx context.Context) (courseDto.CoursesResponse_Full, error)
 }
 
@@ -35,20 +35,7 @@ func NewController(service Service) Controller {
 	}
 }
 
-package courses
-
-import (
-    "net/http"
-    "your_project/dto"
-    "your_project/services"
-    "github.com/gin-gonic/gin"
-)
-
-type CourseController struct {
-    service services.CourseServiceInterface
-}
-
-func (controller *CourseController) GetCourseByID(c *gin.Context) {
+func (controller *Controller) GetCourseByID(c *gin.Context) {
     id := c.Param("id")
     if id == "" {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid course ID"})
@@ -152,19 +139,6 @@ func (controller Controller) Update(ctx *gin.Context) {
 	})
 }
 
-// func GetCourses(c *gin.Context) {
-
-// 	var coursesDto courseDto.CoursesResponse_Full
-// 	coursesDto, err := service.CourseService.GetCourses
-// 	fmt.Println(coursesDto, err)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, err.Error())
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, coursesDto)
-// }
-
 func GetCourseByTitle(c *gin.Context) {
     title := c.Param("title")
     if title == "" {
@@ -241,27 +215,27 @@ func PostCourse(c *gin.Context) {
 	c.JSON(http.StatusCreated, courseDto)
 }
 
-func PutCourse(c *gin.Context) {
-	var courseDto courseDto.CourseResponse_Full
+// func PutCourse(c *gin.Context) {
+// 	var courseDto courseDto.CourseResponse_Full
 
-	err := c.BindJSON(&courseDto)
+// 	err := c.BindJSON(&courseDto)
 
-	if err != nil {
-		//log.Error(err.Error())
-		c.JSON(http.StatusBadRequest, err.Error())
-		return
-	}
+// 	if err != nil {
+// 		//log.Error(err.Error())
+// 		c.JSON(http.StatusBadRequest, err.Error())
+// 		return
+// 	}
 
-	courseDto, er := service.CourseService.Update(courseDto)
+// 	courseDto, er := service.CourseService.Update(courseDto)
 
-	if er != nil {
-		c.JSON(er.Status(), er)
-		return
-	}
+// 	if er != nil {
+// 		c.JSON(er.Status(), er)
+// 		return
+// 	}
 
-	c.JSON(http.StatusCreated, courseDto)
+// 	c.JSON(http.StatusCreated, courseDto)
 
-}
+// }
 
 func Delete(c *gin.Context) {
 	idParam := c.Param("id")
@@ -273,7 +247,7 @@ func Delete(c *gin.Context) {
 	}
 
 	ctx := c.Request.Context()
-	err = service.CourseService.Delete(ctx, courseID)
+	err = service.CourseService.Delete(ctx, strconv.Itoa(courseID))
 	if err != nil {
 		//log.Error(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -283,21 +257,21 @@ func Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func RegisterUserToCourse(c *gin.Context) {
-	var crr courseDto.CourseRequest_Registration
-	_ = c.BindJSON(&crr)
+// func RegisterUserToCourse(c *gin.Context) {
+// 	var crr courseDto.CourseRequest_Registration
+// 	_ = c.BindJSON(&crr)
 
-	var CourseResponseDto courseDto.CourseResponse_Registration
-	ctx := c.Request.Context()
-	CourseResponseDto, err := service.CourseService.RegisterUserToCourse(ctx, crr.Token, crr.ID_Course)
-	if err != nil {
-		//log.Error(err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+// 	var CourseResponseDto courseDto.CourseResponse_Registration
+// 	ctx := c.Request.Context()
+// 	CourseResponseDto, err := service.CourseService.RegisterUserToCourse(ctx, crr.Token, crr.ID_Course)
+// 	if err != nil {
+// 		//log.Error(err.Error())
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, CourseResponseDto)
-}
+// 	c.JSON(http.StatusOK, CourseResponseDto)
+// }
 
 func GetAll(c *gin.Context) {
 	var coursesDto courseDto.CoursesResponse_Full

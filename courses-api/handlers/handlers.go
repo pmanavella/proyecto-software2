@@ -29,7 +29,9 @@ func (h *Handler) GetCourses(c *gin.Context) {
 
 func (h *Handler) GetCourseByID(c *gin.Context) {
     id := c.Param("id")
-    course, err := h.service.GetCourseById(id)
+
+    ctx := c.Request.Context()
+    course, err := h.service.GetCourseByID(ctx, id)
     if err != nil {
         c.JSON(err.Status(), err)
         return
@@ -38,7 +40,7 @@ func (h *Handler) GetCourseByID(c *gin.Context) {
 }
 
 func (h *Handler) CreateCourse(c *gin.Context) {
-    var courseRequest courses.CourseNewRequest
+    var courseRequest courses.CourseResponse_Full
     if err := c.ShouldBindJSON(&courseRequest); err != nil {
         c.JSON(http.StatusBadRequest, errors.NewBadRequestApiError("invalid json body"))
         return
@@ -55,13 +57,14 @@ func (h *Handler) CreateCourse(c *gin.Context) {
 
 func (h *Handler) UpdateCourse(c *gin.Context) {
     id := c.Param("id")
-    var courseRequest courses.CourseNewRequest
+    var courseRequest courses.CourseResponse_Full
     if err := c.ShouldBindJSON(&courseRequest); err != nil {
         c.JSON(http.StatusBadRequest, errors.NewBadRequestApiError("invalid json body"))
         return
     }
 
-    err := h.service.Update(id, courseRequest)
+    
+    err := h.service.Update(c.Request.Context(), id, courseRequest)
     if err != nil {
         c.JSON(err.Status(), err)
         return

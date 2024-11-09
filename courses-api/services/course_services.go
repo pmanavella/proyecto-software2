@@ -18,7 +18,7 @@ type CourseServiceInterface interface {
 	SearchByTitle(ctx context.Context, title string) ([]dto.CourseResponse_Full, errors.ApiError)
 	SearchByCategory(ctx context.Context, category string) ([]dto.CourseResponse_Full, errors.ApiError)
 	SearchByDescription(ctx context.Context, description string) ([]dto.CourseResponse_Full, errors.ApiError)
-    //RegisterUserToCourse(ctx context.Context, token string, courseID string) (dto.CourseResponse_Registration, errors.ApiError)	
+   // RegisterUserToCourse(ctx context.Context, token string, courseID string) (dto.CourseResponse_Registration, errors.ApiError)	
 	GetAll(ctx context.Context) ([]dto.CourseResponse_Full, errors.ApiError)
 }
 
@@ -90,7 +90,7 @@ func (s *courseService) GetCourseByID(ctx context.Context, id string) (dto.Cours
 
 func (s *courseService) Create(ctx context.Context, course dto.CourseResponse_Full) (dto.CourseResponse_Full, errors.ApiError) {
     // Implementación del método Create
-    daoCourse := repositories.Course{
+    daoCourse := dao.Course{
         Title:        course.Title,
         Description:  course.Description,
         Category:     course.Category,
@@ -182,7 +182,7 @@ func (s *courseService) Update(ctx context.Context, id string, course dto.Course
 }
 
 func (s *courseService) Delete(ctx context.Context, id string) errors.ApiError {
-	err := s.repo.Delete(ctx, id)
+	id, err := s.repo.Delete(ctx, id)
 	if err != nil {
 		return errors.NewInternalServerApiError("error deleting course", err)
 	}

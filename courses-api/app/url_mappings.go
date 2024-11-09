@@ -16,11 +16,11 @@ func MapUrls() {
 	router.GET("/course/category=:category", courseController.GetCourseByCategory)
 	router.GET("/course/description=:description", courseController.GetCourseByDescription)
 
-	router.POST("/course/register", courseController.RegisterUserToCourse)
+	//router.POST("/course/register", courseController.RegisterUserToCourse)
 	router.POST("/course", courseController.CreateCourse)
 	router.POST("/course", courseController.PostCourse)
 
-	router.PUT("/course/:id_course", courseController.PutCourse)
+	//router.PUT("/course/:id_course", courseController.PutCourse)
 	router.PUT("/course/:id_course", courseController.Update) // no debería solo dejar este put? Igual dentro de Put se llama a update
 
 	router.DELETE("/course", courseController.Delete)
