@@ -4,9 +4,9 @@ import (
     "github.com/gin-gonic/gin"
     "log"
     "search-api/clients/queues"
-    controllers "search-api/controllers/search"
-    repositories "search-api/repositories/courses"
-    services "search-api/services/search"
+    controllers "search-api/controllers"
+    repositories "search-api/repositories"
+    services "search-api/services"
 )
 
 func main() {
@@ -18,13 +18,21 @@ func main() {
     })
 
     // Rabbit
-    eventsQueue := queues.NewRabbit(queues.RabbitConfig{
-        Host:      "rabbitmq",
+    eventsQueue, err := queues.NewRabbit(queues.RabbitConfig{
+        Host:      "localhost",
         Port:      "5672",
-        Username:  "root",
-        Password:  "root",
+        Username:  "guest",
+        Password:  "guest",
         QueueName: "courses-news",
     })
+
+    if err != nil {
+        log.Fatalf("Error connecting to RabbitMQ: %v", err)
+        return
+    }
+
+    
+    log.Println(eventsQueue)
 
     // Courses API
     coursesAPI := repositories.NewHTTP(repositories.HTTPConfig{
@@ -36,7 +44,7 @@ func main() {
     service := services.NewService(solrRepo, coursesAPI)
 
     // Controllers
-    controller := controllers.NewController(service)
+    controller := controllers.NewCourseController(service)
 
     // Launch rabbit consumer
     if err := eventsQueue.StartConsumer(service.HandleCourseNew); err != nil {

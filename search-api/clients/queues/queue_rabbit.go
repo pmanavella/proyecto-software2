@@ -1,11 +1,10 @@
 package queues
 
 import (
-    "context"
     "encoding/json"
     "fmt"
     "log"
-    "search-api/domain/courses"
+    courses "search-api/dao"
 
     "github.com/streadway/amqp"
 )
@@ -58,6 +57,8 @@ func NewRabbit(config RabbitConfig) (*Rabbit, error) {
 
 // StartConsumer starts consuming messages from the RabbitMQ queue
 func (r *Rabbit) StartConsumer(handler func(courses.CourseNew)) error {
+
+
     msgs, err := r.channel.Consume(
         r.queue.Name, // queue
         "",           // consumer
@@ -67,6 +68,8 @@ func (r *Rabbit) StartConsumer(handler func(courses.CourseNew)) error {
         false,        // no-wait
         nil,          // args
     )
+
+
     if err != nil {
         return fmt.Errorf("failed to register a consumer: %w", err)
     }

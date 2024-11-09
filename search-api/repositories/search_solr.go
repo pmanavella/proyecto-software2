@@ -6,7 +6,7 @@ import (
     "encoding/json"
     "fmt"
     "github.com/stevenferrer/solr-go"
-    "search-api/dao/courses"
+    courses "search-api/dao"
 )
 
 type SolrConfig struct {
@@ -33,13 +33,13 @@ func NewSolr(config SolrConfig) Solr {
 }
 
 // Index adds a new course document to the Solr collection
-func (searchEngine Solr) Index(ctx context.Context, course courses.Course) (string, error) {
+func (searchEngine Solr) Index(ctx context.Context, course courses.Search) (string, error) {
     // Prepare the document for Solr
     doc := map[string]interface{}{
-        "id":         course.ID,
-        "name":       course.Name,
-        "capacity":   course.Capacity,
-        "instructor": course.Instructor,
+        "id":           course.ID_Course,
+        "description":  course.Description,
+        "capacity":     course.Capacity,
+        "instructor":   course.Instructor,
     }
 
     // Prepare the index request
@@ -67,15 +67,15 @@ func (searchEngine Solr) Index(ctx context.Context, course courses.Course) (stri
         return "", fmt.Errorf("error committing changes to Solr: %w", err)
     }
 
-    return course.ID, nil
+    return course.ID_Course, nil
 }
 
 // Update modifies an existing course document in the Solr collection
-func (searchEngine Solr) Update(ctx context.Context, course courses.Course) error {
+func (searchEngine Solr) Update(ctx context.Context, course courses.Search) error {
     // Prepare the document for Solr
     doc := map[string]interface{}{
-        "id":         course.ID,
-        "name":       course.Name,
+        "id":         course.ID_Course,
+        "description":       course.Description,
         "capacity":   course.Capacity,
         "instructor": course.Instructor,
     }
@@ -141,7 +141,7 @@ func (searchEngine Solr) Delete(ctx context.Context, id string) error {
 }
 
 // Search executes a search query in the Solr collection
-func (searchEngine Solr) Search(ctx context.Context, query string, limit int, offset int) ([]courses.Course, error) {
+func (searchEngine Solr) Search(ctx context.Context, query string, limit int, offset int) ([]courses.Search, error) {
     // Prepare the Solr query with limit and offset
     solrQuery := fmt.Sprintf("q=(name:%s)&rows=%d&start=%d", query, limit, offset)
 
@@ -155,11 +155,11 @@ func (searchEngine Solr) Search(ctx context.Context, query string, limit int, of
     }
 
     // Parse the response and extract course documents
-    var coursesList []courses.Course
+    var coursesList []courses.Search
     for _, doc := range resp.Response.Documents {
-        course := courses.Course{
-            ID:         getStringField(doc, "id"),
-            Name:       getStringField(doc, "name"),
+        course := courses.Search{
+            ID_Course:         getStringField(doc, "id"),
+            Description:       getStringField(doc, "description"),
             Capacity:   getIntField(doc, "capacity"),
             Instructor: getStringField(doc, "instructor"),
         }

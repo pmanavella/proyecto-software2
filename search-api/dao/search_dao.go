@@ -10,5 +10,10 @@ type Search struct {
 	Instructor   string    `bson:"instructor"`
 	Points       string    `bson:"points"`
 	Requirements string    `bson:"requirements"`
+	Capacity 	 int 	   `bson:"capacity"`
 }
 
+type CourseNew struct {
+	Operation string `json:"operation"`
+	CourseID   string `json:"hotel_id"`
+}

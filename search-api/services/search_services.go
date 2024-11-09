@@ -5,13 +5,16 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"search-api/search_dao"
-	"search-api/search_dto"
+	dao "search-api/dao"
+	"search-api/dto/search"
 )
 
 // Repository define la interfaz para la búsqueda de cursos
 type Repository interface {
-	Search(ctx context.Context, query string, offset int, limit int) ([]search_dao.Search, error)
+	Index(ctx context.Context, course dao.Search) (string, error)
+	Update(ctx context.Context, course dao.Search) error
+	Delete(ctx context.Context, id string) error
+	Search(ctx context.Context, query string, offset int, limit int) ([]dao.Search, error)
 }
 
 // RabbitMQ2 define la interfaz para consumir mensajes de RabbitMQ
@@ -19,17 +22,21 @@ type RabbitMQ2 interface {
 	ConsumeQueue()
 }
 
+type ExternalRepository interface {
+	GetCourseByID(ctx context.Context, id string) (dao.Search, error)
+}
+
 // Service representa el servicio principal de búsqueda de cursos
 type Service struct {
 	repository Repository
-	rabbitRepo RabbitMQ2
+	coursesAPI ExternalRepository
 }
 
 // NewService crea una nueva instancia del servicio de búsqueda
-func NewService(repository Repository, rabbitRepo RabbitMQ2) Service {
+func NewService(repository Repository, coursesAPI ExternalRepository) Service {
 	return Service{
 		repository: repository,
-		rabbitRepo: rabbitRepo,
+		coursesAPI: coursesAPI,
 	}
 }
 
@@ -37,7 +44,6 @@ func NewService(repository Repository, rabbitRepo RabbitMQ2) Service {
 func (service Service) Search(ctx context.Context, query string, offset int, limit int) ([]search_dto.SearchDto, error) {
 	// Prueba de conexión para verificar si llegan mensajes
 	log.Println("Conexión correcta")
-	service.rabbitRepo.ConsumeQueue()
 
 	// Realiza la búsqueda de cursos en el repositorio
 	courses, err := service.repository.Search(ctx, query, offset, limit)
@@ -61,4 +67,56 @@ func (service Service) Search(ctx context.Context, query string, offset int, lim
 	}
 
 	return result, nil
+}
+
+
+func (service Service) HandleCourseNew(courseNew dao.CourseNew) {
+	switch courseNew.Operation {
+	case "CREATE", "UPDATE":
+		// Fetch course details from the local service
+		course, err := service.coursesAPI.GetCourseByID(context.Background(), courseNew.CourseID)
+		if err != nil {
+			fmt.Printf("Error getting course (%s) from API: %v\n", courseNew.CourseID, err)
+			return
+		}
+
+		// Map to the Search DAO structure
+		courseDAO := dao.Search{
+			ID_Course:    course.ID_Course,
+			Description:  course.Description,
+			Category:     course.Category,
+			ImageURL:     course.ImageURL,
+			Duration:     course.Duration,
+			Instructor:   course.Instructor,
+			Requirements: course.Requirements,
+			Capacity:     course.Capacity,
+			Points:       course.Points,
+		}
+
+		// Handle Index operation
+		if courseNew.Operation == "CREATE" {
+			if _, err := service.repository.Index(context.Background(), courseDAO); err != nil {
+				fmt.Printf("Error indexing course (%s): %v\n", courseNew.CourseID, err)
+			} else {
+				fmt.Println("Course indexed successfully:", courseNew.CourseID)
+			}
+		} else { // Handle Update operation
+			if err := service.repository.Update(context.Background(), courseDAO); err != nil {
+				fmt.Printf("Error updating course (%s): %v\n", courseNew.CourseID, err)
+			} else {
+				fmt.Println("Course updated successfully:", courseNew.CourseID)
+			}
+		}
+
+	case "DELETE":
+		// Call Delete method directly since no course details are needed
+		if err := service.repository.Delete(context.Background(), courseNew.CourseID); err != nil {
+			fmt.Printf("Error deleting course (%s): %v\n", courseNew.CourseID, err)
+		} else {
+			fmt.Println("Course deleted successfully:", courseNew.CourseID)
+		}
+
+	default:
+		fmt.Printf("Unknown operation: %s\n", courseNew.Operation)
+	}
 }

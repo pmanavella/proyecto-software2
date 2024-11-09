@@ -5,7 +5,7 @@ import (
     "fmt"
     "github.com/gin-gonic/gin"
     "net/http"
-    "search-api/search_dto"
+    "search-api/dto/search"
     "strconv"
 )
 
