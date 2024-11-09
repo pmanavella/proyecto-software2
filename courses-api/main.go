@@ -1,55 +1,66 @@
 package main
 
 import (
-    clients "courses-api/clients/queues"
-    "courses-api/handlers"
-    "courses-api/repositories"
-    "courses-api/services"
-    "github.com/gin-gonic/gin"
-    "log"
+	clients "courses-api/clients/queues"
+	"courses-api/handlers"
+	"courses-api/repositories"
+	"courses-api/services"
+	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    // Configuración de MongoDB
-    repository := repositories.NewMongo(repositories.MongoConfig{
-        Host:       "localhost",
-        Port:       "27017",
-        Username:   "root",
-        Password:   "root",
-        Database:   "courses",
-        Collection: "courses",
-    })
+	// Configuración de MongoDB
+	repository := repositories.NewMongo(repositories.MongoConfig{
+		Host:       "localhost",
+		Port:       "27017",
+		Username:   "root",
+		Password:   "root",
+		Database:   "courses",
+		Collection: "courses",
+	})
 
-    // Configuración de RabbitMQ
-    rabbitConfig := clients.RabbitConfig{
-        Host:      "localhost",
-        Port:      "5672",
-        Username:  "guest",
-        Password:  "guest",
-        QueueName: "course_updates",
-    }
-    rabbit := clients.NewRabbit(rabbitConfig)
+	// Configuración de RabbitMQ
+	rabbitConfig := clients.RabbitConfig{
+		Host:      "localhost",
+		Port:      "5672",
+		Username:  "guest",
+		Password:  "guest",
+		QueueName: "course_updates",
+	}
+	rabbit := clients.NewRabbit(rabbitConfig)
 
-    // Configuración de Servicios y Handlers
-    service := services.NewCourseService(repository, rabbit)
-    handler := handlers.NewHandler(service)
+	// Configuración de Servicios y Handlers
+	service := services.NewCourseService(repository, rabbit)
+	handler := handlers.NewHandler(service)
 
-    // Configuración del Router
-    router := gin.Default()
-    router.GET("/courses/:id", handler.GetCourseByID)
-    router.POST("/createCourse", handler.CreateCourse)
-    router.PUT("/edit/:course_id", handler.UpdateCourse)
-    router.DELETE("/delete/:course_id", handler.DeleteCourse)
-    router.GET("/search", handler.SearchByTitle)
+	// Configuración del Router
+	router := gin.Default()
+	// router.GET("/courses/:id", handler.GetCourseByID)
+	router.POST("/createCourse", handler.CreateCourse)
+	router.PUT("/edit/:course_id", handler.UpdateCourse)
+	router.DELETE("/delete/:course_id", handler.DeleteCourse)
+	router.GET("/search", handler.SearchByTitle)
 
-    if err := router.Run(":8081"); err != nil {
-        log.Fatalf("error running application: %v", err)
-    }
+	/////////
+	router.GET("/course", handler.GetAll)
+	router.GET("/course/:id", handler.GetCourseByID)
+	router.GET("/course/title=:title", handler.SearchByTitle)
+	router.GET("/course/category=:category", handler.SearchByCategory)
+	router.GET("/course/description=:description", handler.SearchByDescription)
+
+	//router.PUT("/course/:id_course", courseController.PutCourse)
+	router.PUT("/course/:id_course", handler.Update) // no debería solo dejar este put? Igual dentro de Put se llama a update
+
+	router.DELETE("/course", handler.Delete)
+
+	if err := router.Run(":8081"); err != nil {
+		log.Fatalf("error running application: %v", err)
+	}
 }
 
-
 /////// alternative
-
 
 // package main
 
