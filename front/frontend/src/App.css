@@ -36,3 +36,56 @@
     transform: rotate(360deg);
   }
 }
+
+.App {
+  text-align: center;
+}
+
+.SearchBar {
+  margin: 20px;
+}
+
+.SearchBar input {
+  width: 300px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.Courses {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Course {
+  display: flex;
+  align-items: flex-start;
+  width: 80%;
+  border-bottom: 1px solid #ccc;
+  margin: 20px 0;
+  padding-bottom: 20px;
+}
+
+.Course-image {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.Course-details {
+  text-align: left;
+}
+
+.Course-title {
+  font-size: 2em;
+  margin: 0;
+}
+
+.Course-description {
+  margin: 10px 0;
+}
+
+.Course-category {
+  font-weight: bold;
+}

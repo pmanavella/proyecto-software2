@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"users-api/dao"
+	users "users-api/dao"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -103,9 +103,9 @@ func (repository MySQL) Delete(id int64) error {
 }
 
 func (repository MySQL) GetUserByEmail(email string) (users.User, error) {
-    var user users.User
-    if err := repository.db.Where("email = ?", email).First(&user).Error; err != nil {
-        return users.User{}, fmt.Errorf("error getting user by email: %w", err)
-    }
-    return user, nil
+	var user users.User
+	if err := repository.db.Where("email = ?", email).First(&user).Error; err != nil {
+		return users.User{}, fmt.Errorf("error getting user by email: %w", err)
+	}
+	return user, nil
 }
