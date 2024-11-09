@@ -18,7 +18,7 @@ type CourseServiceInterface interface {
 	SearchByTitle(ctx context.Context, title string) ([]dto.CourseResponse_Full, errors.ApiError)
 	SearchByCategory(ctx context.Context, category string) ([]dto.CourseResponse_Full, errors.ApiError)
 	SearchByDescription(ctx context.Context, description string) ([]dto.CourseResponse_Full, errors.ApiError)
-   // RegisterUserToCourse(ctx context.Context, token string, courseID string) (dto.CourseResponse_Registration, errors.ApiError)	
+	// RegisterUserToCourse(ctx context.Context, token string, courseID string) (dto.CourseResponse_Registration, errors.ApiError)
 	GetAll(ctx context.Context) ([]dto.CourseResponse_Full, errors.ApiError)
 }
 
@@ -26,7 +26,7 @@ type CourseServiceInterface interface {
 // 	Publish(CourseNew course.CourseNew) error
 // }
 
-/// new
+// / new
 var (
 	CourseService CourseServiceInterface
 )
@@ -49,7 +49,7 @@ func (s *courseService) GetAll(ctx context.Context) ([]dto.CourseResponse_Full, 
 	var response []dto.CourseResponse_Full
 	for _, course := range courses {
 		response = append(response, dto.CourseResponse_Full{
-			ID_Course:    course.ID_Course,
+			ID_Course:    course.ID_Course.Hex(),
 			Title:        course.Title,
 			Description:  course.Description,
 			Category:     course.Category,
@@ -72,7 +72,7 @@ func (s *courseService) GetCourseByID(ctx context.Context, id string) (dto.Cours
 	}
 
 	response := dto.CourseResponse_Full{
-		ID_Course:    course.ID_Course,
+		ID_Course:    course.ID_Course.Hex(),
 		Title:        course.Title,
 		Description:  course.Description,
 		Category:     course.Category,
@@ -87,28 +87,27 @@ func (s *courseService) GetCourseByID(ctx context.Context, id string) (dto.Cours
 	return response, nil
 }
 
-
 func (s *courseService) Create(ctx context.Context, course dto.CourseResponse_Full) (dto.CourseResponse_Full, errors.ApiError) {
-    // Implementación del método Create
-    daoCourse := dao.Course{
-        Title:        course.Title,
-        Description:  course.Description,
-        Category:     course.Category,
-        ImageURL:     course.ImageURL,
-        Duration:     course.Duration,
-        Instructor:   course.Instructor,
-        Points:       course.Points,
-        Capacity:     course.Capacity,
-        Requirements: course.Requirements,
-    }
+	// Implementación del método Create
+	daoCourse := dao.Course{
+		Title:        course.Title,
+		Description:  course.Description,
+		Category:     course.Category,
+		ImageURL:     course.ImageURL,
+		Duration:     course.Duration,
+		Instructor:   course.Instructor,
+		Points:       course.Points,
+		Capacity:     course.Capacity,
+		Requirements: course.Requirements,
+	}
 
-    id, err := s.repo.Create(ctx, daoCourse)
-    if err != nil {
-        return dto.CourseResponse_Full{}, errors.NewInternalServerApiError("error creating course", err)
-    }
+	id, err := s.repo.Create(ctx, daoCourse)
+	if err != nil {
+		return dto.CourseResponse_Full{}, errors.NewInternalServerApiError("error creating course", err)
+	}
 
-    course.ID_Course = id
-    return course, nil
+	course.ID_Course = id
+	return course, nil
 }
 
 // func (s *courseService) Create(ctx context.Context, course dto.CourseResponse_Full) (string, errors.ApiError) {
@@ -165,7 +164,7 @@ func (s *courseService) Update(ctx context.Context, id string, course dto.Course
 	}
 
 	CourseResponse_Full := dto.CourseResponse_Full{
-		ID_Course:    daoCourse.ID_Course,
+		ID_Course:    daoCourse.ID_Course.Hex(),
 		Title:        daoCourse.Title,
 		Description:  daoCourse.Description,
 		Category:     daoCourse.Category,
@@ -182,7 +181,7 @@ func (s *courseService) Update(ctx context.Context, id string, course dto.Course
 }
 
 func (s *courseService) Delete(ctx context.Context, id string) errors.ApiError {
-	id, err := s.repo.Delete(ctx, id)
+	_, err := s.repo.Delete(ctx, id)
 	if err != nil {
 		return errors.NewInternalServerApiError("error deleting course", err)
 	}
@@ -216,7 +215,7 @@ func (s *courseService) SearchByTitle(ctx context.Context, title string) ([]dto.
 	var response []dto.CourseResponse_Full
 	for _, course := range courses {
 		response = append(response, dto.CourseResponse_Full{
-			ID_Course:    course.ID_Course,
+			ID_Course:    course.ID_Course.Hex(),
 			Title:        course.Title,
 			Description:  course.Description,
 			Category:     course.Category,
@@ -241,7 +240,7 @@ func (s *courseService) SearchByCategory(ctx context.Context, category string) (
 	var response []dto.CourseResponse_Full
 	for _, course := range courses {
 		response = append(response, dto.CourseResponse_Full{
-			ID_Course:    course.ID_Course,
+			ID_Course:    course.ID_Course.Hex(),
 			Title:        course.Title,
 			Description:  course.Description,
 			Category:     course.Category,
@@ -257,7 +256,6 @@ func (s *courseService) SearchByCategory(ctx context.Context, category string) (
 	return response, nil
 }
 
-
 func (s *courseService) SearchByDescription(ctx context.Context, description string) ([]dto.CourseResponse_Full, errors.ApiError) {
 	courses, err := s.repo.SearchByDescription(ctx, description)
 	if err != nil {
@@ -267,7 +265,7 @@ func (s *courseService) SearchByDescription(ctx context.Context, description str
 	var response []dto.CourseResponse_Full
 	for _, course := range courses {
 		response = append(response, dto.CourseResponse_Full{
-			ID_Course:    course.ID_Course,
+			ID_Course:    course.ID_Course.Hex(),
 			Title:        course.Title,
 			Description:  course.Description,
 			Category:     course.Category,
@@ -295,7 +293,7 @@ func (s *courseService) SearchByDescription(ctx context.Context, description str
 // 	if err != nil {
 // 		return dto.CourseResponse_Registration{}, errors.NewNotFoundApiError("course not found")
 // 	}
-	
+
 // 	// Validate user registration
 // 	registration, err := s.repo.GetRegistration(ctx, user.ID_User, course.ID_Course)
 // 	if err == nil {

@@ -85,7 +85,7 @@ func (repository Mongo) Create(ctx context.Context, curso dao.Course) (string, e
 
 func (repository Mongo) Update(ctx context.Context, course dao.Course) error {
 	// Convert curso ID to MongoDB ObjectID
-	objectID, err := primitive.ObjectIDFromHex(course.ID_Course)
+	objectID, err := course.ID_Course.MarshalText()
 	if err != nil {
 		return fmt.Errorf("error converting id to mongo ID: %w", err)
 	}
