@@ -80,11 +80,6 @@ func (queue Rabbit) Close() {
 	}
 }
 
-// func (r *Rabbit) Close() {
-//     r.channel.Close()
-//     r.connection.Close()
-// }
-
 func (r *Rabbit) Notify(message courses.CourseResponse_Full) error {
     body, err := json.Marshal(message)
     if err != nil {
