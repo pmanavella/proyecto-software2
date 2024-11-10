@@ -95,3 +95,16 @@ func (repository Cache) Delete(id int64) error {
 func (repository Cache) GetUserByEmail(email string) (users.User, error) {
     return users.User{}, fmt.Errorf("GetUserByEmail not implemented in cache")
 }
+
+
+
+func (repository Cache) InscriptionCourses(userID int64, courseID string) error {
+    // Generar la clave para la inscripción
+    key := fmt.Sprintf("inscription:%d:%s", userID, courseID)
+    
+    // Crear el valor de la inscripción (puede ser cualquier valor, aquí usamos una cadena vacía)
+    repository.client.Set(key, "", repository.ttl)
+
+    // Guardar la inscripción en el caché
+    return nil
+}

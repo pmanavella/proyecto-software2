@@ -109,3 +109,12 @@ func (repository MySQL) GetUserByEmail(email string) (users.User, error) {
 	}
 	return user, nil
 }
+
+
+func (repository MySQL) InscriptionCourses(userID int64, courseID string) error {
+    query := "INSERT INTO inscripción (user_id, course_id) VALUES (?, ?)"
+    if err := repository.db.Exec(query, userID, courseID).Error; err != nil {
+        return fmt.Errorf("error enrolling user to course: %w", err)
+    }
+    return nil
+}

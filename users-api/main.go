@@ -46,7 +46,7 @@ func main() {
 	service := services.NewService(mySQLRepo, cacheRepo, memcachedRepo, jwtTokenizer)
 
 	// Handlers
-	controller := controllers.NewController(service)
+	controller := controllers.NewController(&service)
 
 	// Create router
 	router := gin.Default()
@@ -57,6 +57,7 @@ func main() {
 	router.POST("/users", controller.Create)
 	router.PUT("/users/:id", controller.Update)
 	router.POST("/login", controller.Login)
+	router.POST("/users/:userID/courses/:courseID/enroll", controller.InscriptionCourses)
 
 	// Run application
 	if err := router.Run(":8080"); err != nil {

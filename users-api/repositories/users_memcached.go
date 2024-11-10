@@ -164,3 +164,22 @@ func (repository Memcached) Delete(id int64) error {
 
 	return nil
 }
+
+
+func (repository Memcached) InscriptionCourses(userID int64, courseID string) error {
+    // Generar la clave para la inscripción
+    key := fmt.Sprintf("inscription:%d:%s", userID, courseID)
+    
+    // Crear el valor de la inscripción (puede ser cualquier valor, aquí usamos una cadena vacía)
+    value := &memcache.Item{
+        Key:   key,
+        Value: []byte(""),
+    }
+
+    // Guardar la inscripción en Memcached
+    if err := repository.client.Set(value); err != nil {
+        return fmt.Errorf("error enrolling user to course in memcached: %w", err)
+    }
+
+    return nil
+}

@@ -16,6 +16,7 @@ type Repository interface {
 	GetUserByEmail(email string) (dao.User, error)
     Update(user dao.User) error
     Delete(id int64) error
+	InscriptionCourses(userID int64, courseID string) error // Nuevo método
 }
 
 type Tokenizer interface {
@@ -36,6 +37,31 @@ func NewService(mainRepository, cacheRepository, memcachedRepository Repository,
 		memcachedRepository: memcachedRepository,
 		tokenizer:           tokenizer,
 	}
+}
+
+
+func (s *Service) InscriptionCourses(userID int64, courseID string) error {
+	_, err := s.mainRepository.GetUserByID(userID)
+    if err != nil {
+        return fmt.Errorf("error retrieving user: %w", err)
+    }
+
+    err = s.mainRepository.InscriptionCourses(userID, courseID)
+    if err != nil {
+        return fmt.Errorf("error enrolling user to course: %w", err)
+    }
+
+    err = s.cacheRepository.InscriptionCourses(userID, courseID)
+    if err != nil {
+        return fmt.Errorf("error updating cache: %w", err)
+    }
+
+    err = s.memcachedRepository.InscriptionCourses(userID, courseID)
+    if err != nil {
+        return fmt.Errorf("error updating memcached: %w", err)
+    }
+
+    return nil
 }
 
 func (service Service) GetAll() ([]domain.User, error) {

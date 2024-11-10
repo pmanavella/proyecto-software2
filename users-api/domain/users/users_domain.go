@@ -27,3 +27,9 @@ type Token struct {
     User_id int    `json:"id_user"`
     Admin   bool   `json:"admin"`
 }
+
+type Course struct {
+    ID          string `json:"id"`
+    Name        string `json:"name"`
+    Description string `json:"description"`
+}
