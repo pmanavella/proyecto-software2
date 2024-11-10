@@ -12,6 +12,14 @@
     color: #fff; /* Texto blanco */
 }
 
+.course-banner-small {
+    color: #20B2AA; /* Verde agua */
+    font-size: 24px; /* Tamaño de letra de 24 píxeles */
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+}
+
 /* Course Title */
 .course-title {
     font-size: 2em;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Home.css';
 import Cookies from "universal-cookie";
 import { FaEmber } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Cookie = new Cookies();
 
@@ -14,32 +15,34 @@ async function getUserByEmail(email){
 }).then(response => response.json())
 }
 
+// async function getCursoByUserId(userId){
+//   return await fetch('http://localhost:8080/course/:id' + userId, {
+//     method: "GET",
+    
+//   }).then(response => response.json())
+// }
+
+// courses functions
 async function getCourses(){
   return await fetch('http://localhost:8081/course')
     .then(response => response.json())
 }
 
-async function getCursoByUserId(userId){
-  return await fetch('http://localhost:8080/course/:id' + userId, {
-    method: "GET",
-    
-  }).then(response => response.json())
-}
-async function getCursoByCategory(category){
+async function SearchByCategory(category){
   return await fetch('http://localhost:8081/course/' + category, {
     method: "GET",
     
   }).then(response => response.json())
 }
 
-async function getCursoByDescription(description){
+async function SearchByDescription(description){
   return await fetch('http://localhost:8081/course/' + description, {
     method: "GET",
     
   }).then(response => response.json())
 }
 
-async function getCursoByTitle(title){
+async function SearchByTitle(title){
   return await fetch('http://localhost:8081/course/' + title, {
     method: "GET",
     
@@ -85,12 +88,12 @@ async function deleteCurso(curso){
   }).then(response => response.json())
 }
 
-async function getCursoByDescription(description){
-  return await fetch('http://localhost:8081/course/' + description, {
-    method: "GET",
+// async function SearchByDescription(description){
+//   return await fetch('http://localhost:8081/course/' + description, {
+//     method: "GET",
     
-  }).then(response => response.json())
-}
+//   }).then(response => response.json())
+// }
 
 async function getAvailableCourses(){
   return await fetch('http://localhost:8081/course/user/available', {
@@ -99,12 +102,12 @@ async function getAvailableCourses(){
   }).then(response => response.json())
 }
 
-async function getRegisteredCourses(){
-  return await fetch('http://localhost:8080/course/user/registered', {
-    method: "POST",
-    body: JSON.stringify({"token":Cookie.get("token")})
-  }).then(response => response.json())
-}
+// async function getRegisteredCourses(){
+//   return await fetch('http://localhost:8080/course/user/registered', {
+//     method: "POST",
+//     body: JSON.stringify({"token":Cookie.get("token")})
+//   }).then(response => response.json())
+// }
 
 async function registerToCourse(id){
   return await fetch("http://localhost:8080/course/register", {
@@ -149,65 +152,65 @@ const Home = () => {
     })
     setNeedAvailableCourses(false)
   }
-  if(!registeredCourses.length && needRegisteredCourses){
-    getRegisteredCourses().then(response => {
-      if (response) {
-        setRegisteredCourses(response)
-      }
-    })
-    setNeedRegisteredCourses(false)
-  }
+  // if(!registeredCourses.length && needRegisteredCourses){
+  //   getRegisteredCourses().then(response => {
+  //     if (response) {
+  //       setRegisteredCourses(response)
+  //     }
+  //   })
+  //   setNeedRegisteredCourses(false)
+  // }
   const toggleAdmin = () => {
     setAdmin(!admin);
   };
 
-  const showHomeAdmin = () => {
-    return (
-      <div className="container">
-        <div className="sidebar">
-          <div className="admin">ADMINISTRADOR</div>
-          <div className="menu-item">Cursos</div>
-        </div>
-        <div className="main-content">
-          <div className="search-bar">
-            <input type="text" placeholder="Buscar" />
-          </div>
-          <div className="courses">
-            {courses ? courses.map((course, index) => (
-              <div key={index} className="Course" onClick={() => goto("/courses/" + course.id_course)}>
-                <div className="course-item">
-                  <div>
-                    <img src={course.image_url} alt={course.title} className="Course-image" />
-                    <span>{course.title}</span>
-                  </div>
-                  <div>
-                    <p className="course-category">{course.category}</p>
-                    <p className="course-duration">{course.duration}</p>
-                    <p className="course-instructor">{course.instructor}</p>
-                    <p className="course-requirements">{course.requirements}</p>
-                    <div className="actions">
-                      <button className="edit">✏️</button>
-                      <button className="add">+</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )) : <p> Loading... </p>}
-          </div>
-        </div>
-        <div className="add-delete-buttons">
-          <button className="add-course">+</button>
-          <div className="add-course-text">
-            <p>+ add new course</p>
-          </div>
-          <button className="delete-course">✖</button>
-          <div className="delete-course-text">
-            <p>x delete course</p>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  // const showHomeAdmin = () => {
+  //   return (
+  //     <div className="container">
+  //       <div className="sidebar">
+  //         <div className="admin">ADMINISTRADOR</div>
+  //         <div className="menu-item">Cursos</div>
+  //       </div>
+  //       <div className="main-content">
+  //         <div className="search-bar">
+  //           <input type="text" placeholder="Buscar" />
+  //         </div>
+  //         <div className="courses">
+  //           {courses ? courses.map((course, index) => (
+  //             <div key={index} className="Course" onClick={() => goto("/courses/" + course.id_course)}>
+  //               <div className="course-item">
+  //                 <div>
+  //                   <img src={course.image_url} alt={course.title} className="Course-image" />
+  //                   <span>{course.title}</span>
+  //                 </div>
+  //                 <div>
+  //                   <p className="course-category">{course.category}</p>
+  //                   <p className="course-duration">{course.duration}</p>
+  //                   <p className="course-instructor">{course.instructor}</p>
+  //                   <p className="course-requirements">{course.requirements}</p>
+  //                   <div className="actions">
+  //                     <button className="edit">✏️</button>
+  //                     <button className="add">+</button>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           )) : <p> Loading... </p>}
+  //         </div>
+  //       </div>
+  //       <div className="add-delete-buttons">
+  //         <button className="add-course">+</button>
+  //         <div className="add-course-text">
+  //           <p>+ add new course</p>
+  //         </div>
+  //         <button className="delete-course">✖</button>
+  //         <div className="delete-course-text">
+  //           <p>x delete course</p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // };
 
   const showHomeAlumno = () => {
     return (
@@ -241,7 +244,10 @@ const Home = () => {
         </div>
         <div className="right-section">
           <div className="available-courses">
-            <div className="available-courses-title">Cursos disponibles</div>
+            {/* <div className="available-courses-title">Cursos disponibles</div> */}
+            <Link to="/courses" className="view-courses-button">
+        Ver Cursos
+      </Link>
             {availableCourses ? availableCourses.map((course, index) => (
               <div key={index} className="Course" onClick={() => goto("/courses/" + course.id_course)}>
                 <div className="course-item">
@@ -264,7 +270,7 @@ const Home = () => {
 
   return (
     <div>
-      <button onClick={toggleAdmin}>CAMBIAR VISTA</button>
+      <div className="course-banner">GESTION DE CURSOS</div>
       {admin ? showHomeAdmin() : showHomeAlumno()}
     </div>
   );

@@ -288,3 +288,27 @@ body {
 .actions button.edit:hover {
     background: #e0a800;
 }
+
+.course-banner {
+    color: #00008B; /* Azul oscuro */
+    font-size: 42px; /* Tamaño de letra grande */
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.view-courses-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.view-courses-button:hover {
+    background-color: #0056b3;
+}

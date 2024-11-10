@@ -1,23 +1,24 @@
-
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Link} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import "./App.css";
-import Home from "./Home"
-import Login from "./Login"
-import Courses from "./Courses"
+import Home from "./Home";
+import Login from "./Login";
+import Courses from "./Courses";
 
-function App(){
-return (
+function App() {
+  return (
     <Router>
       <Routes>
-        <Route exact path = "/" element={<Home/>}/>
-        <Route path= "/login" element={<Login/>}/>
-        <Route path= "/courses/:id" element={<Courses/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/courses/:id" element={<Courses />} />
       </Routes>
     </Router>
   );
 }
+
 export default App;
+
 
 // export default App;
 // function App() {
