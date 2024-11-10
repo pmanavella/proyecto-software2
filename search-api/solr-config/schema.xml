@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<schema name="hotels" version="1.6">
+<schema name="courses" version="1.6">
     <fields>
         <field name="id" type="string" indexed="true" stored="true" required="true"/>
         <field name="name" type="text_general" indexed="true" stored="true"/>
