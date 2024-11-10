@@ -15,25 +15,39 @@ async function getUserByEmail(email){
 }
 
 async function getCourses(){
-  return await fetch('http://localhost:8080/course')
+  return await fetch('http://localhost:8081/course')
     .then(response => response.json())
 }
 
 async function getCursoByUserId(userId){
-  return await fetch('http://localhost:8080/course/' + userId, {
+  return await fetch('http://localhost:8080/course/:id' + userId, {
     method: "GET",
     
   }).then(response => response.json())
 }
 async function getCursoByCategory(category){
-  return await fetch('http://localhost:8080/course/' + category, {
+  return await fetch('http://localhost:8081/course/' + category, {
+    method: "GET",
+    
+  }).then(response => response.json())
+}
+
+async function getCursoByDescription(description){
+  return await fetch('http://localhost:8081/course/' + description, {
+    method: "GET",
+    
+  }).then(response => response.json())
+}
+
+async function getCursoByTitle(title){
+  return await fetch('http://localhost:8081/course/' + title, {
     method: "GET",
     
   }).then(response => response.json())
 }
 
 async function postCurso(curso){
-  return await fetch('http://localhost:8080/course', {
+  return await fetch('http://localhost:8081/course', { // creatCourse
     method: "POST",
     
     body: JSON.stringify(curso)
@@ -41,7 +55,23 @@ async function postCurso(curso){
 }
 
 async function putCurso(curso){
-  return await fetch('http://localhost:8080/course/' + curso.id_course, {
+  return await fetch('http://localhost:8081/course/' + curso.id_course, {
+    method: "PUT",
+    
+    body: JSON.stringify(curso)
+  }).then(response => response.json())
+}
+
+async function creatCourse(curso){
+  return await fetch('http://localhost:8081/course', {
+    method: "POST",
+    
+    body: JSON.stringify(curso)
+  }).then(response => response.json())
+}
+
+async function updateCurso(curso){
+  return await fetch('http://localhost:8081/course/' + curso.id_course, {
     method: "PUT",
     
     body: JSON.stringify(curso)
@@ -49,21 +79,21 @@ async function putCurso(curso){
 }
 
 async function deleteCurso(curso){
-  return await fetch('http://localhost:8080/course/' + curso.id_course, {
+  return await fetch('http://localhost:8081/course/' + curso.id_course, {
     method: "DELETE",
     
   }).then(response => response.json())
 }
 
 async function getCursoByDescription(description){
-  return await fetch('http://localhost:8080/course/' + description, {
+  return await fetch('http://localhost:8081/course/' + description, {
     method: "GET",
     
   }).then(response => response.json())
 }
 
 async function getAvailableCourses(){
-  return await fetch('http://localhost:8080/course/user/available', {
+  return await fetch('http://localhost:8081/course/user/available', {
     method: "POST",
     body: JSON.stringify({"token":Cookie.get("token")})
   }).then(response => response.json())
