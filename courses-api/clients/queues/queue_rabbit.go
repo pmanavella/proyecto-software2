@@ -52,6 +52,39 @@ func NewRabbit(config RabbitConfig) Rabbit {
     }
 }
 
+func (r *Rabbit) Publish(message courses.CourseResponse_Full) error {
+    body, err := json.Marshal(message)
+    if err != nil {
+        return err
+    }
+
+    err = r.channel.Publish(
+        "",
+        r.queue.Name,
+        false,
+        false,
+        amqp.Publishing{
+            ContentType: "application/json",
+            Body:        body,
+        },
+    )
+    return err
+}
+
+func (queue Rabbit) Close() {
+	if err := queue.channel.Close(); err != nil {
+		log.Printf("error closing Rabbit channel: %v", err)
+	}
+	if err := queue.connection.Close(); err != nil {
+		log.Printf("error closing Rabbit connection: %v", err)
+	}
+}
+
+// func (r *Rabbit) Close() {
+//     r.channel.Close()
+//     r.connection.Close()
+// }
+
 func (r *Rabbit) Notify(message courses.CourseResponse_Full) error {
     body, err := json.Marshal(message)
     if err != nil {
