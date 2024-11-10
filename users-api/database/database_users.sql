@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Crear la tabla intermedia inscripción 
 CREATE TABLE IF NOT EXISTS inscripción (
     user_id BIGINT NOT NULL,
-    course_id BIGINT NOT NULL,
+    course_id VARCHAR(255) NOT NULL,
     enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, course_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE);
@@ -40,7 +40,7 @@ INSERT INTO users (username, password, nombre, apellido, email, admin) VALUES
 
 -- armar el insert into de inscripción para que me muestre por ejemplo, user 1 se inscribió en curso 1, user 2 se inscribió en curso 2, etc.
  INSERT INTO inscripción (user_id, course_id) VALUES
-(1, 1),
-(2, 2),
-(3, 3),
-(4, 4); 
+(1, '672fbd7cd67448a3b78a16e0'),
+(2, '672fcb86fe3086a3af7133b7'),
+(3, '6730c7391d7def5b02158e90'),
+(4, '6730dc3a1d7def5b02158e91'); 
