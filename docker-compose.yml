@@ -82,3 +82,8 @@ services:
     command: solr-create -c courses networks:- app-network
     networks:
       - app-network
+
+
+  networks:
+    app-network:
+      driver: bridge
