@@ -88,6 +88,25 @@ async function deleteCurso(curso){
   }).then(response => response.json())
 }
 
+// extra, search courses about search-api 8082
+async function searchCourses(query) {
+  try {
+    const response = await fetch(`http://localhost:8082/search?query=${query}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Search failed');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error searching courses:', error);
+    throw error;
+  }
+}
+
 // async function SearchByDescription(description){
 //   return await fetch('http://localhost:8081/course/' + description, {
 //     method: "GET",
@@ -95,12 +114,12 @@ async function deleteCurso(curso){
 //   }).then(response => response.json())
 // }
 
-async function getAvailableCourses(){
-  return await fetch('http://localhost:8081/course/user/available', {
-    method: "POST",
-    body: JSON.stringify({"token":Cookie.get("token")})
-  }).then(response => response.json())
-}
+// async function getAvailableCourses(){
+//   return await fetch('http://localhost:8081/course/user/available', {
+//     method: "POST",
+//     body: JSON.stringify({"token":Cookie.get("token")})
+//   }).then(response => response.json())
+// }
 
 // async function getRegisteredCourses(){
 //   return await fetch('http://localhost:8080/course/user/registered', {
@@ -144,14 +163,14 @@ const Home = () => {
     getCourses().then(response => setCourses(response))
     setNeedCourses(false)
   }
-  if(!availableCourses.length && needAvailableCourses){
-    getAvailableCourses().then(response => {
-      if (response) {
-        setAvailableCourses(response)
-      }
-    })
-    setNeedAvailableCourses(false)
-  }
+  // if(!availableCourses.length && needAvailableCourses){
+  //   getAvailableCourses().then(response => {
+  //     if (response) {
+  //       setAvailableCourses(response)
+  //     }
+  //   })
+  //   setNeedAvailableCourses(false)
+  // }
   // if(!registeredCourses.length && needRegisteredCourses){
   //   getRegisteredCourses().then(response => {
   //     if (response) {

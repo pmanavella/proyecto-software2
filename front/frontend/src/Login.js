@@ -113,6 +113,7 @@ const Login = () => {
           </div>
           {renderErrorMessage("default")}
           <button type="submit">Register</button>
+          <button className="white-button" onClick={() => goto("/")}>HOME 🏠</button>
           <div className="register-link">
             <p>Already have an account? <a href="#" onClick={loginLink}>Login</a></p>
           </div>
@@ -138,6 +139,7 @@ const Login = () => {
           <button type="submit">Login</button>
           <div className="register-link">
             <p>Don't have an account? <a href="#" onClick={registerLink}>Register</a></p>
+            <button className="white-button" onClick={() => goto("/")}>HOME 🏠</button>
           </div>
         </form>
       </div>
@@ -149,6 +151,13 @@ const Login = () => {
       {register ? showRegister() : showLogin()}
     </div>
   );
+
+  return (
+    <div>
+        <button onClick={() => goto("/")}>HOME 🏠</button>
+        {/* {showCourses()} */}
+    </div>
+)
 };
 
 export default Login;

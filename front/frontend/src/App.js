@@ -12,12 +12,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/courses/:id" element={<Courses />} />
+        <Route path="/courses" component={Courses} /> // extra
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
 
 // export default App;
 // function App() {

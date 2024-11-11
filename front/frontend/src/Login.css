@@ -112,3 +112,18 @@ form button {
   text-align: center; /* Centra el texto si es necesario */
   margin: 20px 0; /* Ajusta el margen si es necesario */
 }
+
+.white-button {
+  background-color: white; /* Fondo blanco */
+  color: black; /* Texto negro */
+  padding: 10px 20px; /* Espaciado interno */
+  border: 1px solid black; /* Borde negro */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  font-size: 16px; /* Tamaño de la fuente */
+  transition: background-color 0.3s; /* Transición suave para el fondo */
+}
+
+.white-button:hover {
+  background-color: #f0f0f0; /* Fondo ligeramente gris al pasar el cursor */
+}
