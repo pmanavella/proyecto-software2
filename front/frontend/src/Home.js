@@ -224,7 +224,7 @@ const Home = () => {
       </Link>
           </div>
           <div className="courses">
-          <Link to="/login" className="view-courses-button"> 
+          <Link to="/courses" className="view-courses-button"> 
         Ver Cursos
       </Link>
           <Link to="/courses" className="view-courses-button">
@@ -253,7 +253,7 @@ const Home = () => {
         </div>
         <div className="right-section">
           <div className="available-courses">
-          <Link to="/courses" className="view-courses-button">
+          <Link to="/login" className="view-courses-button">
             Log in / Register
       </Link>
             {availableCourses ? availableCourses.map((course, index) => (

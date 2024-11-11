@@ -94,7 +94,7 @@ const Login = () => {
     return (
       <div className="form-box register">
         <form onSubmit={handleRegisterSubmit}>
-          <h1>Registration</h1>
+          <h1  className="registration-title">Registration</h1>
           <div className="input-box">
             <input type="text" name="firstname" placeholder="Firstname" required />
             <FaUser className='icon' />
@@ -125,7 +125,7 @@ const Login = () => {
     return (
       <div className="form-box login">
         <form onSubmit={handleLoginSubmit}>
-          <h1>Login</h1>
+          <h1  className="registration-title">Login</h1>
           <div className="input-box">
             <input type="email" name="email" placeholder="Email" required />
             <FaEnvelope className='icon' />

@@ -4,9 +4,13 @@
         <field name="id" type="string" indexed="true" stored="true" required="true"/>
         <field name="title" type="text_general" indexed="true" stored="true"/>
         <field name="description" type="text_general" indexed="true" stored="true"/>
+        <field name="category" type="text_general" indexed="true" stored="true"/>
+        <field name="imageURL" type="text_general" indexed="true" stored="true"/>
+        <field name="duration" type="string" indexed="true" stored="true"/>
         <field name="instructor" type="text_general" indexed="true" stored="true"/>
-        <field name="duration" type="int" indexed="true" stored="true"/>
-        <field name="available_seats" type="int" indexed="true" stored="true"/>
+        <field name="points" type="string" indexed="true" stored="true"/>
+        <field name="capacity" type="int" indexed="true" stored="true"/>
+        <field name="requirements" type="string" indexed="true" stored="true"/>
     </fields>
 
     <uniqueKey>id</uniqueKey>

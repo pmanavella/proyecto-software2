@@ -105,3 +105,10 @@ form button {
 .register-link p a:hover {
   text-decoration: underline;
 }
+
+.registration-title {
+  color: salmon; /* Cambia este color al que prefieras */
+  font-size: 2em; /* Ajusta el tamaño de la fuente si es necesario */
+  text-align: center; /* Centra el texto si es necesario */
+  margin: 20px 0; /* Ajusta el margen si es necesario */
+}

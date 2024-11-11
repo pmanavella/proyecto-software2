@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Cookies from "universal-cookie";
 
 const Cookie = new Cookies();
+
 async function getCourseById(id){
     return await fetch('http://localhost:8081/course/' + id, {
     method: 'GET',

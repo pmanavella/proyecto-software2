@@ -19,7 +19,6 @@ function App() {
 
 export default App;
 
-
 // export default App;
 // function App() {
 //   const [courses, setCourses] = useState([{"title":"blabla", "price":50}]);
