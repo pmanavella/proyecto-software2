@@ -19,7 +19,7 @@ func main() {
 
 	// Rabbit
 	eventsQueue, err := queues.NewRabbit(queues.RabbitConfig{
-		Host:      "localhost",
+		Host:      "rabbitmq",
 		Port:      "5672",
 		Username:  "guest",
 		Password:  "guest",

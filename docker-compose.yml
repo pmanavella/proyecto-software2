@@ -1,13 +1,13 @@
 version: '3.9'
 services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - users-api
-      - courses-api
-      - search-api
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - users-api
+  #     - courses-api
+  #     - search-api
 
   users-api:
     build: ./users-api
