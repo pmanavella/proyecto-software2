@@ -15,7 +15,7 @@ func main() {
 	// MySQL
 	mySQLRepo := repositories.NewMySQL(
 		repositories.MySQLConfig{
-			Host:     "localhost",
+			Host:     "mysql",
 			Port:     "3306",
 			Database: "users_api",
 			Username: "root",
@@ -64,4 +64,3 @@ func main() {
 		log.Panicf("Error running application: %v", err)
 	}
 }
-

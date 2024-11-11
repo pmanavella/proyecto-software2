@@ -22,7 +22,7 @@ func AllowCORS(c *gin.Context) {
 func main() {
 	// Configuración de MongoDB
 	repository := repositories.NewMongo(repositories.MongoConfig{
-		Host:       "localhost",
+		Host:       "mongodb",
 		Port:       "27017",
 		Username:   "root",
 		Password:   "root",
@@ -32,7 +32,7 @@ func main() {
 
 	// Configuración de RabbitMQ
 	rabbitConfig := clients.RabbitConfig{
-		Host:      "localhost",
+		Host:      "rabbitmq",
 		Port:      "5672",
 		Username:  "guest",
 		Password:  "guest",
