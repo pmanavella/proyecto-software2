@@ -1,13 +1,13 @@
 version: '3.9'
 services:
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - users-api
-  #     - courses-api
-  #     - search-api
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - users-api
+      - courses-api
+      - search-api
 
   users-api:
     build: ./users-api
@@ -20,6 +20,8 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - DB_NAME=users_api
+    networks:
+      - app-network
 
   courses-api:
     build: ./courses-api
@@ -30,6 +32,8 @@ services:
       - rabbitmq
     environment:
       - MONGO_URL=mongodb://mongodb:27017/coursesdb
+    networks:
+      - app-network
 
   search-api:
     build: ./search-api
@@ -40,6 +44,8 @@ services:
       - rabbitmq
     environment:
       - SOLR_URL=http://solr:8983/solr/courses
+    networks:
+      - app-network
 
   mysql:
     image: mysql:8.0
@@ -48,21 +54,31 @@ services:
       MYSQL_DATABASE: users_api
     ports:
       - "3306:3306"
+    networks:
+      - app-network
 
   mongodb:
     image: mongo:latest
     ports:
       - "27017:27017"
+    networks:
+      - app-network
 
   rabbitmq:
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - app-network
 
   solr:
-    image: solr:latest
+    image: solr:latest 
+    container_name: solr-container 
     ports:
-      - "8983:8983"
-    command:
-      - solr-create -c courses
+      - "8983:8983" 
+    volumes:
+      - /search-api/solr-config:/ opt/solr/server/solr/courses 
+    command: solr-create -c courses networks:- app-network
+    networks:
+      - app-network
