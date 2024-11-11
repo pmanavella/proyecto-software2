@@ -160,9 +160,7 @@ const Home = () => {
   //   })
   //   setNeedRegisteredCourses(false)
   // }
-  const toggleAdmin = () => {
-    setAdmin(!admin);
-  };
+  
 
   // const showHomeAdmin = () => {
   //   return (
@@ -212,18 +210,29 @@ const Home = () => {
   //   );
   // };
 
-  const showHomeAlumno = () => {
+  const showHome = () => {
     return (
-      <div className="containerAlum">
+    <div className="containerAlum">
+       {/* <img src='Asserts/Fondo.jpg' alt="Imagen" className="bottom-right-image" /> */}
         <div className="left-section">
           <div className="header">
-            <div className="student">ALUMNO</div>
             <div className="search-bar">
               <input type="text" placeholder="Buscar" />
             </div>
+            <Link to="/courses" className="view-search-button">
+            🔍
+      </Link>
           </div>
           <div className="courses">
-            <div className="courses-title">Mis Cursos</div>
+          <Link to="/login" className="view-courses-button"> 
+        Ver Cursos
+      </Link>
+          <Link to="/courses" className="view-courses-button">
+        Mis Cursos
+      </Link>
+      <Link to="/courses" className="view-courses-button">
+        Ver Cursos
+      </Link>
             {registeredCourses ? registeredCourses.map((course, index) => (
               <div key={index} className="Course" onClick={() => goto("/courses/" + course.id_course)}>
                 <div className="course-item">
@@ -244,9 +253,8 @@ const Home = () => {
         </div>
         <div className="right-section">
           <div className="available-courses">
-            {/* <div className="available-courses-title">Cursos disponibles</div> */}
-            <Link to="/courses" className="view-courses-button">
-        Ver Cursos
+          <Link to="/courses" className="view-courses-button">
+            Log in / Register
       </Link>
             {availableCourses ? availableCourses.map((course, index) => (
               <div key={index} className="Course" onClick={() => goto("/courses/" + course.id_course)}>
@@ -271,9 +279,10 @@ const Home = () => {
   return (
     <div>
       <div className="course-banner">GESTION DE CURSOS</div>
-      {admin ? showHomeAdmin() : showHomeAlumno()}
+      {showHome()}
     </div>
   );
 };
 
 export default Home;
+// verificar a donde debe ir el boton login/register
