@@ -1,18 +1,10 @@
 import React, { useEffect, useState} from 'react'
+//import { useNavigate, useParams } from 'react-router-dom';
 import './Results.css';
 import { useParams } from 'react-router-dom';
 import Cookies from "universal-cookie";
 
 const Cookie = new Cookies();
-
-// async function getCourseById(id){
-//     return await fetch('http://localhost:8081/course/' + id, {
-//     method: 'GET',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     }
-// }).then(response => response.json())
-// }
 
 function goto(path){
     window.location = window.location.origin + path
@@ -21,51 +13,39 @@ function goto(path){
 const Results = () => {
     const[course, setCourse] =useState({});
     const { id } = useParams();
+    // const navigate = useNavigate();
 
-    if (!course.id_course) {
-        getCourseById(Number(id)).then(response => {setCourse(response);})
-    }
+    // useEffect(() => {
+    //     fetch(`http://localhost:8081/course/${id}`)
+    //         .then(response => response.json())
+    //         .then(data => setCourse(data));
+    // }, [id]);
+
+
+    // const handleViewDetails = () => {
+    //     navigate(`/details/${id}`);
+    // };
+
     const showCourses= () =>{
         return(
             <div>
-                <div className="course-banner-small">Mis cursos</div>
+                <div className="course-banner-small">CURSOS</div>
                 <div class="course-title">
                     {course.title}
                 </div>
                 <div class="course-info">
                     <div>
-                        <button type="submit">ver detalle</button>
-                        {/* <h4>Descripcion:</h4> */}
-                        {/* <p class="course-description">{course.description}</p> */}
+                        <h4>Descripcion:</h4>
+                        <p class="course-description">{course.description}</p>
                     </div>
-                    <div>
-                        
-                        <p class="course-category">{course.category}</p>
-                    </div>
-                    <div>
-                        
-                        <p class="course-instructor">{course.instructor}</p>
-                    </div>
-                    <div>
-                        
-                        <p class="course-duration">{course.duration}</p>
-                    </div>
-                    <div>
-                        
-                        <p class="course-capacity">{course.capacity}</p>
-                    </div>
-                    <div>
-                        
+                        <h4>Puntos:</h4>
                         <p class="course-points">{course.points}</p>
-                    </div>
                     <div>
-                        <div class="course-requirements-container">
-                            <h4>Requisitos</h4>
-                            <p class="course-requirements">{course.requirements}</p>
-                        </div>
                         <div class="course-image">
                             <img src={course.image_url} alt={course.title}></img>
                         </div>
+                        <button className="button" onClick={() => goto("/details")}>ver detalle</button>
+                        {/* <button type="submit" onClick={handleViewDetails}>ver detalle</button> */}
                     </div>
                 </div>
             </div>
@@ -76,9 +56,70 @@ const Results = () => {
         <div>
             {showCourses()}
             <button className="white-button" onClick={() => goto("/")}>HOME 🏠</button>
-            
         </div>
     )
 }
 
-export default Courses;
+export default Results;
+
+/*
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import './Results.css';
+
+function goto(path){
+    window.location = window.location.origin + path
+}
+
+const Results = () => {
+    const [course, setCourse] = useState({});
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetch(`http://localhost:8081/course/${id}`)
+            .then(response => response.json())
+            .then(data => setCourse(data));
+    }, [id]);
+
+    const handleViewDetails = () => {
+        navigate(`/details/${id}`);
+    };
+
+    const showCourses = () => {
+        return (
+            <div>
+                <div className="course-banner-small">CURSOS</div>
+                <div className="course-title">
+                    {course.title}
+                </div>
+                <div className="course-info">
+                    <div>
+                        <h4>Descripcion:</h4>
+                        <p className="course-description">{course.description}</p>
+                    </div>
+                    <div className="course-image">
+                        <img src={course.image_url} alt={course.title}></img>
+                    </div>
+                    <div>
+                        <h4>Puntos:</h4>
+                        <p className="course-points">{course.points}</p>
+                        <button type="submit" onClick={handleViewDetails}>ver detalle</button>
+                    </div>
+                    <div>
+                        <p className="course-category">{course.category}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div>
+            {showCourses()}
+        </div>
+    );
+};
+
+export default Results;
+*/

@@ -13,8 +13,8 @@
 }
 
 .course-banner-small {
-    color: #7251e9; /* Verde agua */
-    font-size: 2em; /* Tamaño de letra de 24 píxeles */
+    color: salmon ; 
+    font-size: 2em; 
     font-weight: bold;
     text-align: center;
     margin: 20px 0;
@@ -60,7 +60,7 @@
     color: #fff; /* Texto blanco */
 }
 
-.course-instructor::before {
+/* .course-instructor::before {
     content: "👨‍🏫";
     margin-right: 10px;
 }
@@ -68,7 +68,7 @@
 .course-duration::before {
     content: "⏰";
     margin-right: 10px;
-}
+} */
 
 /* Requirements Section */
 .course-requirements-container {

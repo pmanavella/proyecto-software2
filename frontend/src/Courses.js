@@ -43,11 +43,11 @@ const Courses = () => {
                     </div>
                     <div>
                         
-                        <p class="course-instructor">{course.instructor}</p>
+                        {/* <p class="course-instructor">{course.instructor}</p> */}
                     </div>
                     <div>
                         <h4>Duración: </h4>
-                        <p class="course-duration">{course.duration}</p>
+                        {/* <p class="course-duration">{course.duration}</p> */}
                     </div>
                     <div>
                         <h4>Capacidad: </h4>

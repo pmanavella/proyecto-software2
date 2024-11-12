@@ -60,7 +60,7 @@
     color: #fff; /* Texto blanco */
 }
 
-.course-instructor::before {
+/* .course-instructor::before {
     content: "👨‍🏫";
     margin-right: 10px;
 }
@@ -68,7 +68,7 @@
 .course-duration::before {
     content: "⏰";
     margin-right: 10px;
-}
+} */
 
 /* Requirements Section */
 .course-requirements-container {
