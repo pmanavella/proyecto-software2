@@ -1,24 +1,24 @@
 import React, { useEffect, useState} from 'react'
-import './Courses.css';
+import './Results.css';
 import { useParams } from 'react-router-dom';
 import Cookies from "universal-cookie";
 
 const Cookie = new Cookies();
 
-async function getCourseById(id){
-    return await fetch('http://localhost:8081/course/' + id, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-}).then(response => response.json())
-}
+// async function getCourseById(id){
+//     return await fetch('http://localhost:8081/course/' + id, {
+//     method: 'GET',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     }
+// }).then(response => response.json())
+// }
 
 function goto(path){
     window.location = window.location.origin + path
 }
 
-const Courses = () => {
+const Results = () => {
     const[course, setCourse] =useState({});
     const { id } = useParams();
 
@@ -34,11 +34,12 @@ const Courses = () => {
                 </div>
                 <div class="course-info">
                     <div>
-                        <h4>Descripcion:</h4>
-                        <p class="course-description">{course.description}</p>
+                        <button type="submit">ver detalle</button>
+                        {/* <h4>Descripcion:</h4> */}
+                        {/* <p class="course-description">{course.description}</p> */}
                     </div>
                     <div>
-                        <h4>Categoria: </h4>
+                        
                         <p class="course-category">{course.category}</p>
                     </div>
                     <div>
@@ -46,20 +47,20 @@ const Courses = () => {
                         <p class="course-instructor">{course.instructor}</p>
                     </div>
                     <div>
-                        <h4>Duración: </h4>
+                        
                         <p class="course-duration">{course.duration}</p>
                     </div>
                     <div>
-                        <h4>Capacidad: </h4>
+                        
                         <p class="course-capacity">{course.capacity}</p>
                     </div>
                     <div>
-                        <h4>Puntos: </h4>
+                        
                         <p class="course-points">{course.points}</p>
                     </div>
                     <div>
-                        <h4>Requisitos: </h4>
                         <div class="course-requirements-container">
+                            <h4>Requisitos</h4>
                             <p class="course-requirements">{course.requirements}</p>
                         </div>
                         <div class="course-image">

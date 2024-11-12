@@ -243,8 +243,8 @@ const Home = () => {
       </Link>
           </div>
           <div className="courses">
-          <Link to="/courses" className="view-courses-button"> 
-        Ver Cursos
+          <Link to="/results" className="view-courses-button"> 
+        Cursos Disponibles
       </Link>
           <Link to="/courses" className="view-courses-button">
         Mis Cursos
