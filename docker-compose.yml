@@ -8,6 +8,8 @@ services:
       - users-api
       - courses-api
       - search-api
+    networks:
+      - app-network
 
   users-api:
     build: ./users-api
@@ -78,12 +80,11 @@ services:
     ports:
       - "8983:8983" 
     volumes:
-      - /search-api/solr-config:/ opt/solr/server/solr/courses 
-    command: solr-create -c courses networks:- app-network
+      - ./search-api/solr-config:/opt/solr/server/solr/courses 
+    command: solr-create -c courses
     networks:
       - app-network
 
-
-  networks:
-    app-network:
-      driver: bridge
+networks:
+  app-network:
+    driver: bridge
