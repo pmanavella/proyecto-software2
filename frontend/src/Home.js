@@ -180,55 +180,6 @@ const Home = () => {
   //   setNeedRegisteredCourses(false)
   // }
   
-
-  // const showHomeAdmin = () => {
-  //   return (
-  //     <div className="container">
-  //       <div className="sidebar">
-  //         <div className="admin">ADMINISTRADOR</div>
-  //         <div className="menu-item">Cursos</div>
-  //       </div>
-  //       <div className="main-content">
-  //         <div className="search-bar">
-  //           <input type="text" placeholder="Buscar" />
-  //         </div>
-  //         <div className="courses">
-  //           {courses ? courses.map((course, index) => (
-  //             <div key={index} className="Course" onClick={() => goto("/courses/" + course.id_course)}>
-  //               <div className="course-item">
-  //                 <div>
-  //                   <img src={course.image_url} alt={course.title} className="Course-image" />
-  //                   <span>{course.title}</span>
-  //                 </div>
-  //                 <div>
-  //                   <p className="course-category">{course.category}</p>
-  //                   <p className="course-duration">{course.duration}</p>
-  //                   <p className="course-instructor">{course.instructor}</p>
-  //                   <p className="course-requirements">{course.requirements}</p>
-  //                   <div className="actions">
-  //                     <button className="edit">✏️</button>
-  //                     <button className="add">+</button>
-  //                   </div>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           )) : <p> Loading... </p>}
-  //         </div>
-  //       </div>
-  //       <div className="add-delete-buttons">
-  //         <button className="add-course">+</button>
-  //         <div className="add-course-text">
-  //           <p>+ add new course</p>
-  //         </div>
-  //         <button className="delete-course">✖</button>
-  //         <div className="delete-course-text">
-  //           <p>x delete course</p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // };
-
   const showHome = () => {
     return (
     <div className="containerAlum">
@@ -248,9 +199,6 @@ const Home = () => {
       </Link>
           <Link to="/courses" className="view-courses-button">
         Mis Cursos
-      </Link>
-      <Link to="/courses" className="view-courses-button">
-        Ver Cursos
       </Link>
             {registeredCourses ? registeredCourses.map((course, index) => (
               <div key={index} className="Course" onClick={() => goto("/courses/" + course.id_course)}>
