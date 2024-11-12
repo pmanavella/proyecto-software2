@@ -41,7 +41,6 @@ func (searchEngine Solr) Index(ctx context.Context, course courses.Search) (stri
         "capacity":     course.Capacity,
         "instructor":   course.Instructor,
         "category":     course.Category,
-        "duration":     course.Duration,
     }   
 
     // Prepare the index request
@@ -81,7 +80,6 @@ func (searchEngine Solr) Update(ctx context.Context, course courses.Search) erro
         "capacity":   course.Capacity,
         "instructor": course.Instructor,
         "category":     course.Category,
-        "duration":     course.Duration,
     }
 
     // Prepare the update request
@@ -167,7 +165,6 @@ func (searchEngine Solr) Search(ctx context.Context, query string, limit int, of
             Capacity:   getIntField(doc, "capacity"),
             Instructor: getStringField(doc, "instructor"),
             Category:     getStringField(doc, "category"),
-            Duration:     getIntField(doc, "duration"),
         }
         coursesList = append(coursesList, course)
     }
