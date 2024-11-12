@@ -3,10 +3,14 @@ package search
 
 import (
 	"context"
+	"encoding/json"
+	"io/ioutil"
 	"fmt"
 	"log"
+	"net/http"
 	dao "search-api/dao"
 	"search-api/dto/search"
+	"sync"
 )
 
 // Repository define la interfaz para la búsqueda de cursos
