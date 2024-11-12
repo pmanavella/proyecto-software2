@@ -36,8 +36,8 @@ services:
     image: rabbitmq:4-management
     container_name: rabbit-container
     ports:
-      - "5671:5671"
       - "5672:5672"
+      - "5671:5671"
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: root

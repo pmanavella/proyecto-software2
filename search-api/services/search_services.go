@@ -7,6 +7,9 @@ import (
 	"log"
 	dao "search-api/dao"
 	"search-api/dto/search"
+	http "net/http"
+	bytes "bytes"
+	json "encoding/json"
 	
 )
 
@@ -120,4 +123,99 @@ func (service Service) HandleCourseNew(courseNew dao.CourseNew) {
 	default:
 		fmt.Printf("Unknown operation: %s\n", courseNew.Operation)
 	}
+}
+
+type SolrRepository struct {
+	solrURL string
+}
+
+// NewSolrRepository crea una nueva instancia de SolrRepository
+func NewSolrRepository(solrURL string) *SolrRepository {
+	return &SolrRepository{solrURL: solrURL}
+}
+
+// Index envía un documento de curso a Solr para indexación
+func (repo *SolrRepository) Index(ctx context.Context, course dao.Search) (string, error) {
+	doc := map[string]interface{}{
+		"id_course":    course.ID_Course,
+		"description":  course.Description,
+		"category":     course.Category,
+		"image_url":    course.ImageURL,
+		"duration":     course.Duration,
+		"instructor":   course.Instructor,
+		"points":       course.Points,
+		"requirements": course.Requirements,
+		"capacity":     course.Capacity,
+	}
+
+	indexRequest := map[string]interface{}{
+		"add": []interface{}{doc},
+	}
+
+	jsonData, err := json.Marshal(indexRequest)
+	if err != nil {
+		return "", fmt.Errorf("error marshaling course data to JSON: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", repo.solrURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("error creating HTTP request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("error sending request to Solr: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("error indexing course in Solr, status code: %d", resp.StatusCode)
+	}
+
+	return course.ID_Course, nil
+}
+
+// Update modifica un documento de curso existente en Solr
+func (repo *SolrRepository) Update(ctx context.Context, course dao.Search) error {
+	doc := map[string]interface{}{
+		"id_course":    course.ID_Course,
+		"description":  course.Description,
+		"category":     course.Category,
+		"image_url":    course.ImageURL,
+		"duration":     course.Duration,
+		"instructor":   course.Instructor,
+		"points":       course.Points,
+		"requirements": course.Requirements,
+		"capacity":     course.Capacity,
+	}
+
+	updateRequest := map[string]interface{}{
+		"add": []interface{}{doc},
+	}
+
+	body, err := json.Marshal(updateRequest)
+	if err != nil {
+		return fmt.Errorf("error marshaling course document: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", repo.solrURL, bytes.NewBuffer(body))
+	if err != nil {
+		return fmt.Errorf("error creating HTTP request: %w", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("error updating course: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to update course in Solr, status code: %d", resp.StatusCode)
+	}
+
+	return nil
 }
