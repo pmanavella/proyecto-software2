@@ -16,6 +16,7 @@ type Service interface {
 	Delete(id int64) error
 	Login(username string, password string) (domain.LoginResponse, error)
 	InscriptionCourses(userID int64, courseID string) error
+	// GetCoursesByUserID(userID int64) ([]domain.Course, error) // Agregamos este metodo
 }
 
 type Controller struct {
@@ -27,6 +28,22 @@ func NewController(service Service) Controller {
 		service: service,
 	}
 }
+
+/*func (c *Controller) GetCoursesByUserID(ctx *gin.Context) {
+    userID, err := strconv.ParseInt(ctx.Param("userID"), 10, 64)
+    if err != nil {
+        ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+        return
+    }
+
+    courses, err := c.service.GetCoursesByUserID(userID)
+    if err != nil {
+        ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    ctx.JSON(http.StatusOK, courses)
+}*/
 
 func (uc *Controller) InscriptionCourses(c *gin.Context) {
 	// Obtener el userID de los parámetros de la URL y convertirlo a int64

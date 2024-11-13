@@ -3,8 +3,11 @@ package users
 import (
 	"crypto/md5"
 	"encoding/hex"
+	// "encoding/json"
 	"fmt"
+	// "net/http"
 	dao "users-api/dao"
+	// "io/ioutil"
 	domain "users-api/domain/users"
 	errores "users-api/extra"
 )
@@ -29,6 +32,39 @@ type Service struct {
 	memcachedRepository Repository
 	tokenizer           Tokenizer
 }
+
+
+type Course struct {
+    ID          int64  `json:"id"`
+    Title       string `json:"title"`
+    Description string `json:"description"`
+    // Otros campos 
+}
+ 
+/* func (s *Service) GetCoursesByUserID(userID int64) ([]Course, error) {
+    url := fmt.Sprintf("http://api-cursos/courses?userID=%d", userID)
+    resp, err := http.Get(url)
+    if err != nil {
+        return nil, err
+    }
+    defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK {
+        return nil, fmt.Errorf("error fetching courses: %s", resp.Status)
+    }
+
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return nil, err
+    }
+
+    var courses []Course
+    if err := json.Unmarshal(body, &courses); err != nil {
+        return nil, err
+    }
+
+    return courses, nil
+}*/
 
 func NewService(mainRepository, cacheRepository, memcachedRepository Repository, tokenizer Tokenizer) Service {
 	return Service{
