@@ -16,7 +16,7 @@ async function getUserByEmail(email){
 }
 
 // async function getCursoByUserId(userId){
-//   return await fetch('http://localhost:8080/course/:id' + userId, {
+//   return await fetch('http://localhost:8081/course/:id' + userId, {
 //     method: "GET",
     
 //   }).then(response => response.json())

@@ -5,14 +5,15 @@ import Cookies from "universal-cookie";
 
 const Cookie = new Cookies();
 
-async function getCourseById(id){
-    return await fetch('http://localhost:8081/course/' + id, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-}).then(response => response.json())
-}
+/// acá debe ir GetUserCourses
+// async function getCourseById(id){
+//     return await fetch('http://localhost:8081/course/' + id, {
+//     method: 'GET',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     }
+// }).then(response => response.json())
+// }
 
 function goto(path){
     window.location = window.location.origin + path
@@ -22,24 +23,24 @@ const Courses = () => {
     const[course, setCourse] =useState({});
     const { id } = useParams();
 
-    if (!course.id_course) {
-        getCourseById(Number(id)).then(response => {setCourse(response);})
-    }
+    // if (!course.id_course) {
+    //     getCourseById(Number(id)).then(response => {setCourse(response);})
+    // }
     const showCourses= () =>{
         return(
             <div>
                 <div className="course-banner-small">Mis cursos</div>
-                <div class="course-title">
+                <div className="course-title">
                     {course.title}
                 </div>
-                <div class="course-info">
+                <div className="course-info">
                     <div>
                         <h4>Descripcion:</h4>
-                        <p class="course-description">{course.description}</p>
+                        <p className="course-description">{course.description}</p>
                     </div>
                     <div>
                         <h4>Categoria: </h4>
-                        <p class="course-category">{course.category}</p>
+                        <p className="course-category">{course.category}</p>
                     </div>
                     <div>
                         
@@ -51,18 +52,18 @@ const Courses = () => {
                     </div>
                     <div>
                         <h4>Capacidad: </h4>
-                        <p class="course-capacity">{course.capacity}</p>
+                        <p className="course-capacity">{course.capacity}</p>
                     </div>
                     <div>
                         <h4>Puntos: </h4>
-                        <p class="course-points">{course.points}</p>
+                        <p className="course-points">{course.points}</p>
                     </div>
                     <div>
                         <h4>Requisitos: </h4>
-                        <div class="course-requirements-container">
-                            <p class="course-requirements">{course.requirements}</p>
+                        <div className="course-requirements-container">
+                            <p className="course-requirements">{course.requirements}</p>
                         </div>
-                        <div class="course-image">
+                        <div className="course-image">
                             <img src={course.image_url} alt={course.title}></img>
                         </div>
                     </div>
