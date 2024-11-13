@@ -288,7 +288,6 @@ func GetAll(c *gin.Context) {
 }
 
 
-
 // func GetCoursesByUser(c *gin.Context) {
 // 	var tokenDto dto.CourseRequest_Token
 // 	_ = c.BindJSON(&tokenDto)

@@ -34,6 +34,16 @@ func IsAvailableAsync(courseID string, group *sync.WaitGroup, ch chan Availabili
 }
 
 func IsAvailable(hotelID string) bool {
-	// implement
-	return true
+	// course, err := GetCourseByID(courseID)
+    // if err != nil {
+    //     log.Printf("Error getting course by ID: %v", err)
+    //     return false
+    // }
+
+    // // Verificar la capacidad disponible
+    // if course.Enrolled < course.Capacity {
+    //     return true
+    // }
+
+    return false
 }
