@@ -3,9 +3,9 @@ package queues
 import (
     "encoding/json"
     "fmt"
+    sirup "github.com/sirupsen/logrus"
     "log"
     courses "search-api/dao"
-
     "github.com/streadway/amqp"
 )
 

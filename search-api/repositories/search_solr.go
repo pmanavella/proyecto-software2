@@ -7,6 +7,7 @@ import (
     "fmt"
     "github.com/stevenferrer/solr-go"
     courses "search-api/dao"
+    "time"
 )
 
 type SolrConfig struct {
@@ -196,4 +197,15 @@ func getIntField(doc map[string]interface{}, field string) int {
         }
     }
     return 0
+}
+func getTimeField(doc map[string]interface{}, field string) time.Time {
+	if val, ok := doc[field].(string); ok {
+		// Intentamos analizar la fecha en el formato estándar de Solr (ISO 8601)
+		parsedTime, err := time.Parse(time.RFC3339, val)
+		if err == nil {
+			return parsedTime
+		}
+	}
+	// Si no es posible obtener una fecha, devolvemos el valor cero de time.Time
+	return time.Time{}
 }
