@@ -19,6 +19,11 @@ func AllowCORS(c *gin.Context) {
 }
 
 func main() {
+
+	// Configuración del router de Gin
+	router := gin.Default()
+	router.Use(AllowCORS) // Aplica la función AllowCORS a todas las rutas
+
 	// Solr
 	solrRepo := repositories.NewSolr(repositories.SolrConfig{
 		Host:       "solr",    // Solr host
@@ -60,7 +65,6 @@ func main() {
 	}
 
 	// Create router
-	router := gin.Default()
 	router.GET("/search", controller.Search)
 	if err := router.Run(":8082"); err != nil {
 		log.Fatalf("Error running application: %v", err)

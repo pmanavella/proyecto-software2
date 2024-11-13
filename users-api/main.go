@@ -21,6 +21,11 @@ func AllowCORS(c *gin.Context) {
 }
 
 func main() {
+
+	// Configuración del router de Gin
+	router := gin.Default()
+	router.Use(AllowCORS) // Aplica la función AllowCORS a todas las rutas
+
 	// MySQL
 	mySQLRepo := repositories.NewMySQL(
 		repositories.MySQLConfig{
@@ -56,9 +61,6 @@ func main() {
 
 	// Handlers
 	controller := controllers.NewController(&service)
-
-	// Create router
-	router := gin.Default()
 
 	// URL mappings
 	router.GET("/users", controller.GetAll)

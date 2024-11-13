@@ -44,8 +44,12 @@ func main() {
 	service := services.NewCourseService(repository, rabbit)
 	handler := handlers.NewHandler(service)
 
-	// Configuración del Router
+	// Configuración del router de Gin
 	router := gin.Default()
+	router.Use(AllowCORS) // Aplica la función AllowCORS a todas las rutas
+
+	// Configuración del Router
+	
 	// router.GET("/courses/:id", handler.GetCourseByID)
 	router.POST("/createCourse", handler.CreateCourse)
 	router.PUT("/edit/:course_id", handler.UpdateCourse)
