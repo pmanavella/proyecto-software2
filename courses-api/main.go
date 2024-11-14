@@ -34,8 +34,8 @@ func main() {
 	rabbitConfig := clients.RabbitConfig{
 		Host:      "rabbitmq",
 		Port:      "5672",
-		Username:  "guest",
-		Password:  "guest",
+		Username:  "root",
+		Password:  "root",
 		QueueName: "course_updates",
 	}
 	rabbit := clients.NewRabbit(rabbitConfig)
@@ -49,7 +49,7 @@ func main() {
 	router.Use(AllowCORS) // Aplica la función AllowCORS a todas las rutas
 
 	// Configuración del Router
-	
+
 	// router.GET("/courses/:id", handler.GetCourseByID)
 	router.POST("/createCourse", handler.CreateCourse)
 	router.PUT("/edit/:course_id", handler.UpdateCourse)
@@ -58,7 +58,7 @@ func main() {
 
 	/////////
 	router.GET("/course", AllowCORS, handler.GetAll)
-	router.GET("/course/:id", AllowCORS,handler.GetCourseByID)
+	router.GET("/course/:id", AllowCORS, handler.GetCourseByID)
 	router.GET("/course/title=:title", handler.SearchByTitle)
 	router.GET("/course/category=:category", handler.SearchByCategory)
 	router.GET("/course/description=:description", handler.SearchByDescription)

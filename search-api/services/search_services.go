@@ -55,6 +55,9 @@ func (service Service) Search(ctx context.Context, query string, offset int, lim
 		return nil, fmt.Errorf("error buscando cursosDAO: %s", err.Error())
 	}
 
+	//AGREGAR CONCURRENCIA EN PARA EL FINAL 
+	
+
 	// Convertir los resultados obtenidos en una lista de SearchDto
 	result := make([]search_dto.SearchDto, 0)
 	for _, course := range courses {

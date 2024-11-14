@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
 	"search-api/clients/queues"
 	controllers "search-api/controllers"
 	repositories "search-api/repositories"
 	services "search-api/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 func AllowCORS(c *gin.Context) {
@@ -35,8 +36,8 @@ func main() {
 	eventsQueue, err := queues.NewRabbit(queues.RabbitConfig{
 		Host:      "rabbitmq",
 		Port:      "5672",
-		Username:  "guest",
-		Password:  "guest",
+		Username:  "root",
+		Password:  "root",
 		QueueName: "courses-news",
 	})
 
